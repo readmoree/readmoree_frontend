@@ -1,11 +1,14 @@
 import logo from "./logo.svg";
 import "./App.css";
-
+import Navbar from "./Components/Navbar";
+import Dropdown from "./Components/Dropdown";
+import CategorySearch from "./Pages/CategorySearch";
 function App() {
   return (
-    <div>
-      <h1 className="text-5xl text-sky-400/100 text-center">ReadMoree.in</h1>
-    </div>
+    <>
+      <CategorySearch />
+      {/* <Navbar /> */}
+    </>
   );
 }
 
