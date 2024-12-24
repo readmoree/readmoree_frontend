@@ -4,11 +4,14 @@ import Navbar from "./Components/Navbar";
 import Dropdown from "./Components/Dropdown";
 import CategorySearch from "./Pages/CategorySearch";
 import ProductDes from "./Components/ProductDes";
+import BookComponent from "./Screens/BookComponent";
+
 function App() {
   return (
     <>
-      <CategorySearch />
-      {/* <Navbar /> */}
+      {/* <CategorySearch /> */}
+      <Navbar />
+      <BookComponent />
       {/* <ProductDes /> */}
     </>
   );
