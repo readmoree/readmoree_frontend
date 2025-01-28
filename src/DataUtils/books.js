@@ -4,27 +4,36 @@ const Books = [
     author: "Haruki Murakami",
     imageURL:
       "https://cdn.shopify.com/s/files/1/0648/3066/9017/products/getimage_290ad77a-fbd3-445f-b4fe-d1232ed8ffea_360x.jpg?v=1678851725",
-    price: 979,
-    originalPrice: 1399,
-    discount: 30,
+    price: "₹ 560",
+    originalPrice: "₹ 600",
+    discount: "10%",
+  },
+  {
+    imageURL:
+      "https://storage.googleapis.com/a1aa/image/5CJRzImrtObyNJj7nB5oX0C6W9jZuLty9VeHt5OOKqTxaCfTA.jpg",
+    bookName: "An Eye for an eye",
+    author: "Irene Hannon",
+    price: "₹ 560",
+    originalPrice: "₹ 600",
+    discount: "10%",
   },
   {
     bookName: "The City and Its Uncertain Walls",
     author: "Haruki Murakami",
     imageURL:
       "https://cdn.shopify.com/s/files/1/0648/3066/9017/products/getimage_290ad77a-fbd3-445f-b4fe-d1232ed8ffea_360x.jpg?v=1678851725",
-    price: 979,
-    originalPrice: 1399,
-    discount: 30,
+    price: "₹ 560",
+    originalPrice: "₹ 600",
+    discount: "10%",
   },
   {
     bookName: "The City and Its Uncertain Walls",
     author: "Haruki Murakami",
     imageURL:
       "https://cdn.shopify.com/s/files/1/0648/3066/9017/products/getimage_290ad77a-fbd3-445f-b4fe-d1232ed8ffea_360x.jpg?v=1678851725",
-    price: 979,
-    originalPrice: 1399,
-    discount: 30,
+    price: "₹ 560",
+    originalPrice: "₹ 600",
+    discount: "10%",
   },
   {
     bookName: "The City and Its Uncertain Walls",
