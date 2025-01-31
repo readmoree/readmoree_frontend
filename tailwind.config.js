@@ -5,6 +5,7 @@ module.exports = {
     extend: {
       colors: {
         lilac: "#CDC1FF",
+        lilac_dark: "#A294F9",
       },
     },
   },

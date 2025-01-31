@@ -3,6 +3,7 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import ReviewComponent from "../Components/Review";
+import Navbar from "../Components/Navbar";
 
 // Custom Previous Button
 const PrevArrow = ({ onClick }) => (
@@ -79,6 +80,7 @@ const BookDescriptionScreen = () => {
 
   return (
     <>
+      <Navbar />
       <div className="max-w-6xl my-10 mx-auto p-6">
         <div className="flex flex-col md:flex-row gap-8">
           {/* Carousel */}

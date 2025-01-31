@@ -10,7 +10,7 @@ const Books = [
   },
   {
     imageURL:
-      "https://storage.googleapis.com/a1aa/image/5CJRzImrtObyNJj7nB5oX0C6W9jZuLty9VeHt5OOKqTxaCfTA.jpg",
+      "https://cdn.shopify.com/s/files/1/0648/3066/9017/products/getimage_290ad77a-fbd3-445f-b4fe-d1232ed8ffea_360x.jpg?v=1678851725",
     bookName: "An Eye for an eye",
     author: "Irene Hannon",
     price: "₹ 560",

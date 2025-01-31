@@ -13,7 +13,7 @@ const Dropdown = ({ filterName }) => {
   ];
 
   return (
-    <div className="w-64 border border-gray-300 rounded p-4 mb-2">
+    <div className="min-w-72 border  rounded p-4 mb-2 w">
       {/* Dropdown Header */}
       <div
         className="flex justify-between items-center cursor-pointer"

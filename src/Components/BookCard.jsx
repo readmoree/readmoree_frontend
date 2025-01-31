@@ -1,11 +1,21 @@
 import React from "react";
 import { FaHeart } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const BookCard = ({ book }) => {
+  const navigate = useNavigate();
+  const handleClick = (bookName) => {
+    navigate(
+      `/book-details/${bookName
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .toLowerCase()}`
+    );
+  };
   return (
-    <div>
+    <div className="" onClick={handleClick(book.bookName)}>
       <div className="flex flex-col items-center w flex-shrink-0 mr-5">
-        <div className="border-4 border-white p-4 rounded-lg shadow-md">
+        <div className="border-4 border-white p-2">
           <img
             src={book.imageURL}
             alt={`Book cover of ${book.bookName}`}
