@@ -1,16 +1,15 @@
 import Navbar from "../Components/Navbar";
 import { useState, useEffect } from "react";
-import axios from "axios";
 import OrderList from "../Components/UserProfile/OrderList";
 import PersonalDetails from "../Components/UserProfile/PersonalDetails";
 import SavedAddresses from "../Components/UserProfile/SavedAddresses";
 import MyReviews from "../Components/UserProfile/MyReviews";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import Footer from "../Components/Footer";
+import { loadUserData } from "../services/user";
 
 const UserProfile = () => {
-  const [userData, setUserData] = useState(null);
-  const [userAddress, setUserAddress] = useState([]);
+  const [userData, setUserData] = useState({});
   const [isMenuOpen, setIsMenuOpen] = useState(true);
   const [isOthersMenuOpen, setIsOtherMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("profile");
@@ -18,16 +17,8 @@ const UserProfile = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const userId = 33; // Replace with dynamic logged-in user ID
-        const userResponse = await axios.get(
-          `http://localhost:5000/api/user/${userId}`
-        );
-        setUserData(userResponse.data);
-
-        const addressResponse = await axios.get(
-          `http://localhost:5000/api/address/${userId}`
-        );
-        setUserAddress(addressResponse.data);
+        const data = await loadUserData();
+        setUserData(data);
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -43,7 +34,7 @@ const UserProfile = () => {
       case "orders":
         return <OrderList userId={userData?.customer_id} />;
       case "addresses":
-        return <SavedAddresses userAddress={userAddress} />;
+        return <SavedAddresses userData={userData} />;
       case "reviews":
         return <MyReviews userId={userData?.customer_id} />;
       default:
@@ -69,7 +60,7 @@ const UserProfile = () => {
             <div className="text-center lg:text-left">
               <h3 className="text-xl font-semibold text-gray-800">
                 {userData
-                  ? `${userData.first_name} ${userData.last_name}`
+                  ? `${userData.firstName} ${userData.lastName}`
                   : "Loading..."}
               </h3>
               <p className="text-md text-gray-500">

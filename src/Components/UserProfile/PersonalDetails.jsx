@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaCheckCircle, FaEdit } from "react-icons/fa";
+import { updateUserData } from "../../services/user";
+import { toast } from "react-toastify";
 
+// with month name
 const formatDate = (isoDate) => {
   const date = new Date(isoDate);
   return date.toLocaleDateString("en-GB", {
@@ -10,23 +13,35 @@ const formatDate = (isoDate) => {
   });
 };
 
-const PersonalDetails = () => {
+const PersonalDetails = ({ userData }) => {
+  const { firstName, lastName, mobile, email, dob } = userData;
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({
-    firstName: "Vishal",
-    lastName: "Borse",
-    phone: "7666045526",
-    email: "borsev662@gmail.com",
-    dob: "2002-02-10",
-  });
+  const [formData, setFormData] = useState({});
+
+  useEffect(() => {
+    setFormData({
+      firstName,
+      lastName,
+      mobile,
+      email,
+      dob,
+    });
+  }, [userData]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsEditing(false);
+
+    const response = await updateUserData(formData);
+    if (response.status !== "success") {
+      toast.error("Something went wrong! Please try again");
+    } else {
+      toast.success("Profile updated successfully!");
+    }
   };
 
   return (
@@ -67,7 +82,7 @@ const PersonalDetails = () => {
             <input
               type="tel"
               name="phone"
-              value={formData.phone}
+              value={formData.mobile}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-lilac_dark rounded-lg focus:ring-1 focus:ring-blue-400"
               placeholder="Phone Number"
@@ -83,9 +98,10 @@ const PersonalDetails = () => {
             <input
               type="date"
               name="dob"
-              value={formData.dob}
+              value={formData.dob.split("T")[0]}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-lilac_dark rounded-lg focus:ring-1 focus:ring-blue-400"
+              readOnly
             />
             <div className="flex gap-4">
               <button
@@ -117,7 +133,7 @@ const PersonalDetails = () => {
               <span className="font-medium text-gray-600 w-40">
                 Phone number:
               </span>
-              <span className="font-semibold">+91 {formData.phone}</span>
+              <span className="font-semibold">+91 {formData.mobile}</span>
               <FaCheckCircle className="text-green-500" />
             </div>
             <div className="flex items-center gap-2">

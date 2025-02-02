@@ -22,7 +22,7 @@ const BookCard = ({ book }) => {
             className="w-48 h-72 object-cover mb-4"
           />
         </div>
-        <h3 className="text-center text-lg font-semibold">{book.title}</h3>
+        <h3 className="text-center text-lg font-semibold">{book.bookName}</h3>
         <p className="text-center text-purple-600">{book.author}</p>
         <p className="text-center">
           <span className="text-lg font-semibold">{book.price}</span>

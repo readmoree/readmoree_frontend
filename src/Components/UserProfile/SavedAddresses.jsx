@@ -1,45 +1,30 @@
 import React, { useState } from "react";
 import { FiPlus, FiEdit, FiTrash } from "react-icons/fi";
+import {
+  addAddress,
+  deleteAddress,
+  editAddress,
+  setDefaultAddress,
+} from "../../services/user";
+import { toast } from "react-toastify";
 
-const SavedAddresses = () => {
-  const [addresses, setAddresses] = useState([
-    {
-      id: 1,
-      name: "Home",
-      flatNo: "TCG 1303",
-      building: "Skyline Towers",
-      locality: "Hinjewadi Phase 2",
-      city: "Pune",
-      state: "Maharashtra",
-      pincode: "411057",
-      isDefault: true,
-    },
-    {
-      id: 2,
-      name: "Work",
-      flatNo: "101",
-      building: "Sunset Villas",
-      locality: "Downtown",
-      city: "Mumbai",
-      state: "Maharashtra",
-      pincode: "400001",
-      isDefault: false,
-    },
-  ]);
-
-  const userEmail = "borsev662@gmail.com";
-  const userPhone = "7666045526";
+const SavedAddresses = ({ userData }) => {
+  const [addresses, setAddresses] = useState(userData.addresses);
 
   const [isEditing, setIsEditing] = useState(false);
   const [currentAddress, setCurrentAddress] = useState(null);
   const [newAddress, setNewAddress] = useState({
-    name: "",
+    addressLabel: "",
     flatNo: "",
-    building: "",
+    buildingName: "",
     locality: "",
+    area: "",
     city: "",
+    district: "",
     state: "",
+    country: "",
     pincode: "",
+    isDefault: 0,
   });
 
   const handleEdit = (address) => {
@@ -47,45 +32,74 @@ const SavedAddresses = () => {
     setCurrentAddress(address);
   };
 
-  const handleDelete = (id) => {
-    setAddresses(addresses.filter((addr) => addr.id !== id));
+  const handleDelete = async (id) => {
+    const response = await deleteAddress(id);
+    if (response.status !== "success") {
+      toast.error("Something went wrong! Please try again");
+    } else {
+      toast.success("Address deleted successfully!");
+    }
+    setAddresses(addresses.filter((addr) => addr.addressId !== id));
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (currentAddress) {
+      const response = await editAddress(currentAddress);
+      console.log(response);
+      if (response.status !== "success") {
+        toast.error("Something went wrong! Please try again");
+      } else {
+        toast.success("Address updated successfully!");
+      }
       setAddresses(
         addresses.map((addr) =>
-          addr.id === currentAddress.id ? currentAddress : addr
+          addr.addressId === currentAddress.addressId ? currentAddress : addr
         )
       );
     } else {
-      let addressName = "Home";
-      if (addresses.some((addr) => addr.name === "Home")) {
-        addressName = addresses.some((addr) => addr.name === "Work")
-          ? prompt("Enter a custom name for the address:")
-          : "Work";
+      const response = await addAddress(newAddress);
+      if (response.status !== "success") {
+        toast.error("Something went wrong! Please try again");
+      } else {
+        toast.success("Address added successfully!");
       }
       setAddresses([
         ...addresses,
-        { ...newAddress, id: addresses.length + 1, name: addressName },
+        { ...newAddress, addressId: response.insertedId },
       ]);
     }
     setIsEditing(false);
     setCurrentAddress(null);
     setNewAddress({
-      name: "",
+      addressLabel: "",
       flatNo: "",
-      building: "",
+      buildingName: "",
       locality: "",
+      area: "",
       city: "",
+      district: "",
       state: "",
+      country: "",
       pincode: "",
+      isDefault: 0,
     });
   };
 
-  const handleSetDefault = (id) => {
+  const handleSetDefault = async (id) => {
+    console.log(addresses);
+    const response = await setDefaultAddress(id);
+
+    if (response.status !== "success") {
+      toast.error("Something went wrong! Please try again");
+    } else {
+      toast.success("Successfully changed default address!");
+    }
     setAddresses(
-      addresses.map((addr) => ({ ...addr, isDefault: addr.id === id }))
+      addresses.map((addr) =>
+        addr.addressId === id
+          ? { ...addr, isDefault: 1 }
+          : { ...addr, isDefault: 0 }
+      )
     );
   };
 
@@ -110,33 +124,37 @@ const SavedAddresses = () => {
             {currentAddress ? "Edit Address" : "Add New Address"}
           </h3>
           <div className="grid grid-cols-2 gap-3">
-            {Object.keys(newAddress).map((field) => (
-              <div key={field} className="">
-                <label className="block font-medium mb-1">
-                  {field
-                    .replace(/([A-Z])/g, " $1")
-                    .replace(/^./, (str) => str.toUpperCase())}
-                </label>
-                <input
-                  type="text"
-                  className="border p-2 py-1 w-full rounded-md border-lilac_dark"
-                  value={
-                    currentAddress ? currentAddress[field] : newAddress[field]
-                  }
-                  onChange={(e) =>
-                    currentAddress
-                      ? setCurrentAddress({
-                          ...currentAddress,
-                          [field]: e.target.value,
-                        })
-                      : setNewAddress({
-                          ...newAddress,
-                          [field]: e.target.value,
-                        })
-                  }
-                />
-              </div>
-            ))}
+            {Object.keys(newAddress).map((field) =>
+              field === "isDefault" ? (
+                ""
+              ) : (
+                <div key={field} className="">
+                  <label className="block font-medium mb-1">
+                    {field
+                      .replace(/([A-Z])/g, " $1")
+                      .replace(/^./, (str) => str.toUpperCase())}
+                  </label>
+                  <input
+                    type="text"
+                    className="border p-2 py-1 w-full rounded-md border-lilac_dark"
+                    value={
+                      currentAddress ? currentAddress[field] : newAddress[field]
+                    }
+                    onChange={(e) =>
+                      currentAddress
+                        ? setCurrentAddress({
+                            ...currentAddress,
+                            [field]: e.target.value,
+                          })
+                        : setNewAddress({
+                            ...newAddress,
+                            [field]: e.target.value,
+                          })
+                    }
+                  />
+                </div>
+              )
+            )}
           </div>
           <div className="grid grid-cols-2 gap-4 mt-3">
             <div className="mb-2">
@@ -144,7 +162,7 @@ const SavedAddresses = () => {
               <input
                 type="text"
                 className="border p-2 w-full rounded-md bg-gray-200 "
-                value={userEmail}
+                value={userData.email}
                 disabled
               />
             </div>
@@ -153,7 +171,7 @@ const SavedAddresses = () => {
               <input
                 type="text"
                 className="border p-2 w-full rounded-md bg-gray-200"
-                value={userPhone}
+                value={userData.mobile}
                 disabled
               />
             </div>
@@ -181,16 +199,16 @@ const SavedAddresses = () => {
           >
             <div className="flex justify-between items-center w-full mb-2">
               <h3 className="font-semibold text-lg">
-                {address.name}{" "}
-                {address.isDefault && (
+                {address.addressLabel}{" "}
+                {address.isDefault === 1 && (
                   <span className="text-xs bg-green-500 text-white px-4 py-0.5 rounded-md ml-2">
                     Default
                   </span>
                 )}
               </h3>
-              {!address.isDefault && (
+              {address.isDefault === 0 && (
                 <button
-                  onClick={() => handleSetDefault(address.id)}
+                  onClick={() => handleSetDefault(address.addressId)}
                   className="text-lilac hover:underline"
                 >
                   Set as default
@@ -198,11 +216,11 @@ const SavedAddresses = () => {
               )}
             </div>
             <p className="text-sm text-gray-600">
-              {address.flatNo}, {address.building}, {address.locality},{" "}
+              {address.flatNo}, {address.buildingName}, {address.locality},{" "}
               {address.city}, {address.state}, {address.pincode}
             </p>
             <p className="text-sm text-gray-600">
-              {userPhone} | {userEmail}
+              {userData.mobile} | {userData.email}
             </p>
             <div className="mt-5 flex gap-4">
               <button
@@ -212,7 +230,7 @@ const SavedAddresses = () => {
                 <FiEdit /> Edit
               </button>
               <button
-                onClick={() => handleDelete(address.id)}
+                onClick={() => handleDelete(address.addressId)}
                 className="flex items-center gap-1 text-white bg-black rounded-md px-4 py-1 hover:bg-red-100"
               >
                 <FiTrash /> Delete

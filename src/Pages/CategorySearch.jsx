@@ -2,18 +2,38 @@ import { CiHeart } from "react-icons/ci";
 import React, { useState } from "react";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import Dropdown from "../Components/Dropdown";
-import Books from "../DataUtils/books";
+import response from "../DataUtils/books";
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import axios from "axios";
 
+const uniqArrayVal = (arr) => {
+  const set = new Set();
+  arr.forEach((item) => {
+    if (item) {
+      set.add(item);
+    }
+  });
+
+  return Array.from(set);
+};
+
 const CategorySearch = () => {
+  const sortParameters = [
+    { name: "Price: Low To High" },
+    { name: "Price: High To Low" },
+    { name: "Newest To Oldest" },
+    { name: "Oldest To Newest" },
+  ];
+  const prices = ["200-500", "500-1000", "over 1000"];
+  const discounts = ["10% to 25%", "25% to 35%", "35% to 50%"];
+
   const [isOpen, setIsOpen] = useState(false);
 
   const { label, category, subcategory } = useParams();
-  const [data, setData] = useState({});
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -30,36 +50,49 @@ const CategorySearch = () => {
     setLoading(true);
     setError(null);
     try {
-      const params = {};
+      // const params = {};
 
-      // Replace hyphens (`-`) with spaces (" ")
-      if (label)
-        params.label = label.trim().replace(/-/g, " ").replace(/&/g, "");
-      if (category) params.category = category.trim().replace(/-/g, " ");
-      if (subcategory)
-        params.subcategory = subcategory.trim().replace(/-/g, " ");
+      // // Replace hyphens (`-`) with spaces (" ")
+      // if (label)
+      //   params.label = label.trim().replace(/-/g, " ").replace(/&/g, "");
+      // if (category) params.category = category.trim().replace(/-/g, " ");
+      // if (subcategory)
+      //   params.subcategory = subcategory.trim().replace(/-/g, " ");
 
-      // Manually construct the query string
-      const queryString = Object.keys(params)
-        .map((key) => `${key}=${params[key]}`)
-        .join("&");
+      // // Manually construct the query string
+      // const queryString = Object.keys(params)
+      //   .map((key) => `${key}=${params[key]}`)
+      //   .join("&");
 
-      // Debugging: view query string
-      console.log("Query String:", queryString);
+      // // Debugging: view query string
+      // console.log("Query String:", queryString);
 
-      // Make the request with the manually constructed query string
-      const response = await axios.get(
-        `http://localhost:8080/book/filter?${queryString}`
-      );
+      // // Make the request with the manually constructed query string
+      // const response = await axios.get(
+      //   `http://localhost:8080/book/filter?${queryString}`
+      // );
 
-      console.log(response.data);
+      // console.log(response.data);
       setData(response.data);
       setFilters({
-        authors: response.data.authors || [],
-        publishers: response.data.publishers || [],
-        languages: response.data.languages || [],
+        authors: uniqArrayVal(
+          response.data.map((book) => {
+            return `${book.author.firstName} ${book.author.lastName}`;
+          })
+        ),
+        publishers: uniqArrayVal(
+          response.data.map((book) => book.publisher.name)
+        ),
+        languages: uniqArrayVal(
+          response.data.map((book) => {
+            return book.language.replace(
+              book.language.slice(1),
+              book.language.slice(1).toLowerCase()
+            );
+          })
+        ),
       });
-      console.log(filters.authors);
+      // console.log(filters.authors);
     } catch (err) {
       setError("Failed to fetch data.");
       console.error("Error fetching data:", err);
@@ -69,18 +102,28 @@ const CategorySearch = () => {
 
   const changeSortParam = (sortParamName) => {
     setSortParameter(sortParamName);
+    setIsOpen(false);
+    const temp = [...data];
     if (sortParamName === sortParameters[0].name) {
       //sort according to price low to high
-    }
-    if (sortParamName === sortParameters[1].name) {
+      temp.sort((a, b) => a.price - b.price);
+    } else if (sortParamName === sortParameters[1].name) {
       //sort according to price high to low
-    }
-    if (sortParamName === sortParameters[2].name) {
+      temp.sort((a, b) => b.price - a.price);
+    } else if (sortParamName === sortParameters[2].name) {
       //sort according to publication newest to oldest
+      temp.sort(
+        (a, b) => new Date(b.publicationDate) - new Date(a.publicationDate)
+      );
+    } else if (sortParamName === sortParameters[3].name) {
+      //sort according to publication oldest to newest
+      temp.sort(
+        (a, b) => new Date(a.publicationDate) - new Date(b.publicationDate)
+      );
+    } else {
+      temp.sort((a, b) => a.id - b.id);
     }
-    if (sortParamName === sortParameters[3].name) {
-      //sort according to publication newest to oldest
-    }
+    setData(temp);
   };
 
   // Fetch data when URL parameters change
@@ -88,14 +131,10 @@ const CategorySearch = () => {
     fetchData();
   }, [label, category, subcategory]);
 
-  const sortParameters = [
-    { name: "Price: Low To High" },
-    { name: "Price: High To Low" },
-    { name: "Newest To Oldest" },
-    { name: "Oldest To Newest" },
-  ];
-  const prices = ["200-500", "500-1000", "over 1000"];
-  const discounts = ["10% to 25%", "25% to 35%", "35% to 50%"];
+  useEffect(() => {
+    fetchData();
+  }, []);
+  console.log(data);
 
   const maxLength = 20;
   return (
@@ -150,14 +189,14 @@ const CategorySearch = () => {
                     </h1>
                   </div>
                   <div className="sortDropdown flex justify-end">
-                    <div className="w-64 border border-gray-300 rounded px-5 py-3 mb-1 relative">
+                    <div className="w-80 border border-gray-300 rounded px-5 py-3 mb-1 relative">
                       {/* Dropdown Header */}
                       <div
                         className="flex justify-between items-center cursor-pointer"
                         onClick={() => setIsOpen(!isOpen)}
                       >
                         <h2 className="font-semibold text-md">
-                          Sort By : Relevance
+                          Sort By : {sortParameter || "Relevance"}
                         </h2>
                         <span
                           className={`transform ${isOpen ? "rotate-180" : ""}`}
@@ -172,7 +211,7 @@ const CategorySearch = () => {
                           {sortParameters.map((sortParam, index) => (
                             <div
                               key={index}
-                              onClick={changeSortParam(sortParam.name)}
+                              onClick={() => changeSortParam(sortParam.name)}
                               className="hover:bg-lilac flex items-center justify-between p-2 text-gray-700 hover:bg-gray-00"
                             >
                               <h1 className="text-md py-1">{sortParam.name}</h1>
@@ -184,7 +223,7 @@ const CategorySearch = () => {
                   </div>
                 </div>
                 <div className="books-list flex flex-wrap gap-3 items-center justify-center">
-                  {data.books.map((book, index) => (
+                  {data.map((book, index) => (
                     <div className="p-4 pb-5 w-48 mb-5 w border border-gray-300 rounded-md">
                       {/* Book Image */}
                       <div className="mb-4">
