@@ -35,7 +35,9 @@ const Login = () => {
       if (response.data.status === "success") {
         toast.success("Login successful!");
         sessionStorage.setItem("token", response.data.token);
-        navigate("/");
+        sessionStorage.setItem("role", response.data.role);
+        if (response.data.role === "ADMIN") navigate("/admin/dashboard");
+        if (response.data.role === "CUSTOMER") navigate("/");
       } else {
         toast.error(response.data.message || "Login failed.");
       }

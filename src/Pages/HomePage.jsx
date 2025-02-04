@@ -12,11 +12,11 @@ import Footer from "../Components/Footer";
 
 const HomePage = () => {
   return (
-    <>
+    <div className="overflow-x-hidden">
       <Navbar />
       <MainSlider />
-      <Heading text="NEW RELEASES" />
-      <BooksSlider />
+      {/* {/* <Heading text="NEW RELEASES" /> */}
+      {/* <BooksSlider /> */}
       <Heading text="FEATURED AUTHORS" />
       <AuthorSlider />
       <div className="flex flex-col md:flex-row justify-evenly py-5 w-full gap-2 mt-10 md:mt-10">
@@ -31,7 +31,7 @@ const HomePage = () => {
       </div>
       <Banner />
       <Footer />
-    </>
+    </div>
   );
 };
 

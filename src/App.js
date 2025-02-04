@@ -11,26 +11,113 @@ import VerifyEmail from "./Pages/VerifyEmail";
 import Profile from "./Pages/UserProfile";
 import "react-toastify/dist/ReactToastify.css";
 import { Route, Routes } from "react-router-dom";
+import Wishlist from "./Pages/Wishlist";
+import OrderConfirmation from "./Pages/OrderConfirmation";
+import BookCard from "./Components/BookCard";
+import AdminDashboard from "./Pages/Admin/AdminDashboard";
+import OrderDashboard from "./Pages/Admin/OrdersPage";
+import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
+import ProductsPage from "./Pages/Admin/ProductPage";
+import { registerLicense } from "@syncfusion/ej2-base";
 
+let key =
+  "Ngo9BigBOggjHTQxAR8/V1NMaF1cXmhLYVJ3WmFZfVtgdV9HZFZSQWYuP1ZhSXxWdkdjXX9fcXBWQ2JbWUM=";
+registerLicense(key);
 function App() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        {/* non restricted routes */}
         <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/" element={<HomePage />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
-        <Route path="/:name" element={<BookDescription />} />
         <Route path="/search/:label" element={<CategorySearch />} />
         <Route path="/search/:label/:category" element={<CategorySearch />} />
         <Route
           path="/search/:label/:category/:subcategory"
           element={<CategorySearch />}
         />
-        <Route path="/" element={<HomePage />} />
-        <Route path="/profile" element={<Profile />} />
         <Route path="/book-details/:name" element={<BookDescription />} />
-        <Route path="/cart" element={<CartScreen />} />
+
+        {/* customer routers */}
+        <Route
+          path="/register"
+          element={
+            <ProtectedRoute
+              element={<Register />}
+              allowedRoles={["CUSTOMER"]}
+            />
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute element={<Profile />} allowedRoles={["CUSTOMER"]} />
+          }
+        />
+        <Route
+          path="/cart"
+          element={
+            <ProtectedRoute
+              element={<CartScreen />}
+              allowedRoles={["CUSTOMER"]}
+            />
+          }
+        />
+        <Route
+          path="/wishlist"
+          element={
+            <ProtectedRoute
+              element={<Wishlist />}
+              allowedRoles={["CUSTOMER"]}
+            />
+          }
+        />
+        <Route
+          path="/order-confirmation"
+          element={
+            <ProtectedRoute
+              element={<OrderConfirmation />}
+              allowedRoles={["CUSTOMER"]}
+            />
+          }
+        />
+
+        {/* admin routes */}
+        <Route
+          path="/admin/dashboard"
+          element={
+            <ProtectedRoute
+              element={<AdminDashboard />}
+              allowedRoles={["ADMIN"]}
+            />
+          }
+        />
+        <Route
+          path="/admin/orders"
+          element={
+            <ProtectedRoute
+              element={<OrderDashboard />}
+              allowedRoles={["ADMIN"]}
+            />
+          }
+        />
+        <Route
+          path="/admin/products"
+          element={
+            <ProtectedRoute
+              element={<ProductsPage />}
+              allowedRoles={["ADMIN"]}
+            />
+          }
+        />
+
+        {/* utility routes */}
+        <Route
+          path="/unauthorized"
+          element={<h1>Your Are not Authorized to access this page</h1>}
+        />
+        <Route path="*" element={<h1>404 Not Found</h1>} />
       </Routes>
       <ToastContainer />
     </>
