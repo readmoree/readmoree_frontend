@@ -9,6 +9,25 @@ export async function loadUserData() {
         authorization: `BEARER ${sessionStorage["token"]}`,
       },
     });
+
+    return response.data.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function getUsersByIds(ids) {
+  try {
+    const response = await axios.get(
+      `http://localhost:4000/public/users?ids=${ids}`,
+      {
+        headers: {
+          authorization: `BEARER ${sessionStorage["token"]}`,
+        },
+      }
+    );
+    console.log(response);
     return response.data.data;
   } catch (error) {
     console.error(error);

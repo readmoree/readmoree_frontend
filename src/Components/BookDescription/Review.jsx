@@ -1,34 +1,98 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaStar, FaPen } from "react-icons/fa";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { toast } from "react-toastify";
+import { addReview, getReviewsByBook } from "../../services/book";
+import { getUsersByIds } from "../../services/user";
 
-const ReviewComponent = () => {
-  const [reviews, setReviews] = useState([
-    {
-      name: "John Doe",
-      rating: 4,
-      comment: "Great book! I couldn't put it down.",
-    },
-    {
-      name: "Jane Smith",
-      rating: 5,
-      comment: "An amazing read. Highly recommend it!",
-    },
-  ]);
+const ReviewComponent = ({ currentUser }) => {
+  const [reviews, setReviews] = useState([]);
+  const [usersWhoReviewed, setUsersWhoReviewed] = useState({}); // Changed to object for easy access
+
   const [newReview, setNewReview] = useState({
-    name: "",
     rating: 0,
     comment: "",
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleReviewSubmit = (e) => {
+  const fetchUsers = async (ids) => {
+    if (!ids) return; // Prevent empty request
+    try {
+      const usersData = await getUsersByIds(ids);
+
+      // Transform usersData into an object (only storing firstName and lastName)
+      const usersObject = usersData.reduce((acc, user) => {
+        acc[user.customerId] = {
+          firstName: user.firstName,
+          lastName: user.lastName,
+        };
+        return acc;
+      }, {});
+
+      setUsersWhoReviewed((prev) => ({
+        ...prev,
+        ...usersObject, // Merge with existing data
+      }));
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
+
+  const fetchReviews = async () => {
+    try {
+      const reviewsData = await getReviewsByBook(3);
+      if (reviewsData.length === 0) return;
+
+      setReviews(reviewsData);
+
+      const ids = [...new Set(reviewsData.map((review) => review.customerId))]; // Remove duplicates
+      if (ids.length > 0) {
+        fetchUsers(ids);
+      }
+    } catch (error) {
+      console.error("Error fetching reviews:", error);
+    }
+  };
+
+  // Log the usersWhoReviewed state after it changes
+  useEffect(() => {
+    console.log("Updated usersWhoReviewed:", usersWhoReviewed);
+  }, [usersWhoReviewed]); // This will log whenever usersWhoReviewed changes
+
+  useEffect(() => {
+    fetchReviews();
+  }, []); // Run fetchReviews on initial mount
+
+  const handleReviewSubmit = async (e) => {
     e.preventDefault();
-    if (newReview.name && newReview.comment && newReview.rating > 0) {
-      setReviews([...reviews, newReview]);
-      setNewReview({ name: "", rating: 0, comment: "" });
-      setIsModalOpen(false); // Close modal after submitting review
+    if (newReview.comment && newReview.rating > 0) {
+      const response = await addReview(3, newReview);
+      if (response.status === 201) {
+        const review = response.data.review;
+        console.log(review);
+        setReviews((prev) => [
+          ...prev,
+          { ...review, customerId: currentUser.customerId },
+        ]);
+
+        // Ensure user's name is immediately added to usersWhoReviewed
+        setUsersWhoReviewed((prev) => ({
+          ...prev,
+          [currentUser.customerId]: {
+            firstName: currentUser.firstName,
+            lastName: currentUser.lastName,
+          },
+        }));
+
+        setNewReview({ rating: 0, comment: "" });
+        setIsModalOpen(false);
+        toast.success("Review posted successfully!");
+      } else {
+        toast.error("Something went horribly wrong! Please try again");
+      }
+    } else {
+      toast.error("Review cannot be empty or rating should be above 0");
     }
   };
 
@@ -46,7 +110,13 @@ const ReviewComponent = () => {
             reviews.map((review, index) => (
               <div key={index} className="mb-4 border-b pb-4">
                 <div className="flex items-center justify-between">
-                  <span className="font-semibold">{review.name}</span>
+                  <span className="font-semibold">
+                    {usersWhoReviewed[review.customerId]
+                      ? `${usersWhoReviewed[review.customerId].firstName} ${
+                          usersWhoReviewed[review.customerId].lastName
+                        }`
+                      : "Unknown User"}
+                  </span>
                   <div className="flex text-yellow-500">
                     {[...Array(5)].map((_, i) => (
                       <FaStar
@@ -60,6 +130,11 @@ const ReviewComponent = () => {
                     ))}
                   </div>
                 </div>
+                <p className="text-gray-600 text-sm">
+                  {new Date(review.createdOn)
+                    .toLocaleDateString("en-GB")
+                    .replace(/\//g, "-")}
+                </p>
                 <p className="text-gray-700 mt-2">{review.comment}</p>
               </div>
             ))
@@ -67,12 +142,15 @@ const ReviewComponent = () => {
         </div>
 
         {/* Button to Open Review Modal */}
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700"
-        >
-          Add Your Review
-        </button>
+        {(typeof sessionStorage["token"] !== "undefined" ||
+          sessionStorage["token"] != null) && (
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700"
+          >
+            Add Your Review
+          </button>
+        )}
 
         {/* Modal for Review Form */}
         {isModalOpen && (
@@ -93,25 +171,6 @@ const ReviewComponent = () => {
 
               <h3 className="text-xl font-bold mb-4">Add Your Review</h3>
               <form onSubmit={handleReviewSubmit} className="space-y-4">
-                <div>
-                  <label
-                    className="block font-medium text-gray-600 py-1"
-                    htmlFor="name"
-                  >
-                    Your Name
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    value={newReview.name}
-                    onChange={(e) =>
-                      setNewReview({ ...newReview, name: e.target.value })
-                    }
-                    className="border border-gray-300 rounded px-2 py-2 w-full"
-                    placeholder="Enter your name"
-                  />
-                </div>
-
                 <div>
                   <label
                     className="block font-medium text-gray-600 py-1"
@@ -159,6 +218,7 @@ const ReviewComponent = () => {
                 </div>
 
                 <button
+                  onClick={handleReviewSubmit}
                   type="submit"
                   className="bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700"
                 >
