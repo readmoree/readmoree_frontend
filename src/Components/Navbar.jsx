@@ -49,9 +49,20 @@ const Navbar = () => {
   };
 
   const handleCartClick = () => {
-    navigate("/cart");
+    if (isAuthenticated) {
+      navigate("/cart");
+    } else {
+      navigate("/login");
+    }
   };
 
+  const handleWishlistClick = () => {
+    if (isAuthenticated) {
+      navigate("/wishlist");
+    } else {
+      navigate("/login");
+    }
+  };
   const renderHoveredComponent = () => {
     switch (hoveredCategory) {
       case "ACADEMICS":
@@ -189,7 +200,10 @@ const Navbar = () => {
           {/* <a className="text-gray-500">|</a> */}
 
           {/* Shopping Bag Icon */}
-          <div className="relative border border-black rounded-md">
+          <div
+            className="relative border border-black rounded-md"
+            onClick={handleWishlistClick}
+          >
             <button className="flex items-center gap-2 px-3 py-2 rounded">
               <FaRegHeart className="text-xl" />
               <span className="font-semibold">Bookshelf</span>

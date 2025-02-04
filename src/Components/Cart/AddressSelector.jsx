@@ -1,24 +1,34 @@
-/* Vivek@28/01 on VSCode */
-
 import { ChevronRight, X } from "lucide-react";
+import { useState } from "react";
 
 const AddressSelector = ({
   selectedAddress,
-  isAddressModalOpen,
-  isNewAddressModalOpen,
   addresses,
-  toggleAddressModal,
-  toggleNewAddressModal,
   handleAddressSelect,
 }) => {
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+
   return (
     <div>
       <div className="border p-4 flex justify-between items-center">
-        <p className="text-gray-700 font-semibold">
-          Deliver to: <span className="text-gray-900">{selectedAddress}</span>
-        </p>
+        <p className="text-gray-700 font-semibold">Deliver to: </p>
+        <div>
+          {selectedAddress ? (
+            <>
+              <h3>{selectedAddress.addressLabel}</h3>
+              <p className="text-sm text-gray-600">
+                {selectedAddress.flatNo}, {selectedAddress.buildingName},{" "}
+                {selectedAddress.locality}, {selectedAddress.city},{" "}
+                {selectedAddress.state}, {selectedAddress.pincode}
+              </p>
+            </>
+          ) : (
+            "No address selected"
+          )}
+        </div>
+
         <button
-          onClick={toggleAddressModal}
+          onClick={() => setIsAddressModalOpen(true)}
           className="bg-transparent p-2 hover:bg-gray-100 rounded-full flex items-center justify-center"
           aria-label="Change Address"
         >
@@ -31,7 +41,7 @@ const AddressSelector = ({
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded w-[500px] relative">
             <button
-              onClick={toggleAddressModal}
+              onClick={() => setIsAddressModalOpen(false)}
               className="absolute top-6 right-5 text-gray-600 text-2xl"
             >
               <X className="text-gray-600 w-6 h-6" />
@@ -40,74 +50,35 @@ const AddressSelector = ({
               Select Delivery Address
             </h3>
             <ul className="space-y-4">
-              {addresses.map((address, index) => (
+              {addresses.map((address) => (
                 <li
-                  key={index}
-                  className="border p-3 flex justify-between items-center"
+                  key={address.address_id}
+                  className="border p-3 flex justify-between items-center cursor-pointer hover:bg-gray-100"
+                  onClick={() => {
+                    handleAddressSelect(address);
+                    setIsAddressModalOpen(false);
+                  }}
                 >
-                  <p>{address}</p>
+                  <div className="flex flex-col">
+                    <h3>{address.addressLabel}</h3>
+                    <p className="text-sm text-gray-600">
+                      {address.flatNo}, {address.buildingName},{" "}
+                      {address.locality}, {address.city}, {address.state},{" "}
+                      {address.pincode}
+                    </p>
+                  </div>
                   <input
                     type="radio"
                     name="address"
-                    value={address}
-                    checked={selectedAddress === address}
-                    onChange={() => handleAddressSelect(address)}
-                    className="form-radio"
+                    checked={
+                      selectedAddress &&
+                      selectedAddress.address_id === address.address_id
+                    }
+                    readOnly
                   />
                 </li>
               ))}
             </ul>
-            <div className="flex justify-between mt-4">
-              <button
-                onClick={toggleNewAddressModal}
-                className="w-full bg-purple-600 text-white px-4 py-2 hover:bg-purple-700"
-              >
-                Add New Address
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Add New Address Modal */}
-      {isNewAddressModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded w-[500px] relative">
-            <button
-              onClick={toggleNewAddressModal}
-              className="absolute top-6 right-5 text-gray-600 text-2xl"
-            >
-              <X className="text-gray-600 w-6 h-6" />
-            </button>
-            <h3 className="font-semibold text-lg mb-4">Add New Address</h3>
-            <form className="space-y-4">
-              <input
-                type="text"
-                placeholder="Full Name"
-                className="w-full border p-2"
-              />
-              <input
-                type="text"
-                placeholder="Street Address"
-                className="w-full border p-2"
-              />
-              <input
-                type="text"
-                placeholder="City"
-                className="w-full border p-2"
-              />
-              <input
-                type="text"
-                placeholder="ZIP Code"
-                className="w-full border p-2"
-              />
-              <button
-                type="submit"
-                className="w-full bg-purple-600 text-white px-4 py-2 hover:bg-purple-700"
-              >
-                Add Address
-              </button>
-            </form>
           </div>
         </div>
       )}
