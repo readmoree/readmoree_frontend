@@ -1,6 +1,34 @@
 import axios from "axios";
 
-const BOOK_SERVICE_URL = "http://192.168.0.106:8080";
+const BOOK_SERVICE_URL = "http://192.168.0.104:8080";
+
+export async function getAllBooks() {
+  try {
+    const response = await axios.get(`${BOOK_SERVICE_URL}/book/public/all`);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function getBookByCat(params) {
+  try {
+    const queryString = Object.keys(params)
+      .map((key) => `${key}=${params[key]}`)
+      .join("&");
+
+    const response = await axios.get(
+      `${BOOK_SERVICE_URL}/book/public/filter?${queryString}`
+    );
+    console.log(`${BOOK_SERVICE_URL}/book/public/filter?${queryString}`);
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
 
 export async function getBookById(id) {
   try {

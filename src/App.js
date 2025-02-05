@@ -37,7 +37,7 @@ function App() {
           path="/search/:label/:category/:subcategory"
           element={<CategorySearch />}
         />
-        <Route path="/book-details/:name" element={<BookDescription />} />
+        <Route path="/book-details/:id" element={<BookDescription />} />
 
         {/* customer routers */}
         <Route
@@ -52,7 +52,10 @@ function App() {
         <Route
           path="/profile"
           element={
-            <ProtectedRoute element={<Profile />} allowedRoles={["CUSTOMER"]} />
+            <ProtectedRoute
+              element={<Profile />}
+              allowedRoles={["CUSTOMER", "ADMIN"]}
+            />
           }
         />
         <Route

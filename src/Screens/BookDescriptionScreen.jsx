@@ -9,15 +9,17 @@ import ImageCarousel from "../Components/BookDescription/ImageCarousel";
 import BookDetails from "../Components/BookDescription/BookDetails";
 import { getBookById } from "../services/book";
 import { loadUserData } from "../services/user";
+import { useParams } from "react-router-dom";
 
 const BookDescriptionScreen = () => {
   const [book, setBook] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
+  const { id } = useParams();
 
   useEffect(() => {
     const fetchBook = async () => {
       try {
-        const bookData = await getBookById(15);
+        const bookData = await getBookById(id);
         setBook(bookData);
       } catch (error) {
         console.error(error);
@@ -34,7 +36,7 @@ const BookDescriptionScreen = () => {
     };
 
     fetchBook();
-    fetchCurrentUser();
+    if (typeof sessionStorage["token"] !== "undefined") fetchCurrentUser();
   }, []);
 
   return (
@@ -62,7 +64,7 @@ const BookDescriptionScreen = () => {
           <br />
           <br />
           <hr />
-          <ReviewComponent currentUser={currentUser} />
+          <ReviewComponent currentUser={currentUser} id={id} />
         </div>
       )}
     </>

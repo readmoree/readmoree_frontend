@@ -1,26 +1,20 @@
 import { CiHeart } from "react-icons/ci";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import Dropdown from "../Components/Dropdown";
-import response from "../DataUtils/books";
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
-import { useParams } from "react-router-dom";
-import { useEffect } from "react";
-import axios from "axios";
+import { Link, useParams } from "react-router-dom";
+import ReactPaginate from "react-paginate";
+import { getBookByCat } from "../services/book";
 
 const uniqArrayVal = (arr) => {
-  const set = new Set();
-  arr.forEach((item) => {
-    if (item) {
-      set.add(item);
-    }
-  });
-
-  return Array.from(set);
+  return Array.from(new Set(arr.filter(Boolean)));
 };
 
 const CategorySearch = () => {
+  const booksPerPage = 5; // Number of books per page
+
   const sortParameters = [
     { name: "Price: Low To High" },
     { name: "Price: High To Low" },
@@ -31,12 +25,11 @@ const CategorySearch = () => {
   const discounts = ["10% to 25%", "25% to 35%", "35% to 50%"];
 
   const [isOpen, setIsOpen] = useState(false);
-
   const { label, category, subcategory } = useParams();
   const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const [sortParameter, setSortParameter] = useState("");
 
   const [filters, setFilters] = useState({
@@ -44,55 +37,43 @@ const CategorySearch = () => {
     publishers: [],
     languages: [],
   });
+  const [selectedFilters, setSelectedFilters] = useState({
+    authors: [],
+    publishers: [],
+    languages: [],
+    priceRange: "",
+    discountRange: "",
+  });
 
-  // Function to fetch data
+  const [currentPage, setCurrentPage] = useState(0); // Current page for pagination
+
+  // Fetch data function
   const fetchData = async () => {
     setLoading(true);
     setError(null);
     try {
-      // const params = {};
+      const params = {};
 
-      // // Replace hyphens (`-`) with spaces (" ")
-      // if (label)
-      //   params.label = label.trim().replace(/-/g, " ").replace(/&/g, "");
-      // if (category) params.category = category.trim().replace(/-/g, " ");
-      // if (subcategory)
-      //   params.subcategory = subcategory.trim().replace(/-/g, " ");
+      if (label)
+        params.label = label
+          .trim()
+          .replace(/-/g, " ")
+          .replace(/&/g, "")
+          .toUpperCase();
+      if (category) params.category = category.trim().replace(/\s+/g, "-");
+      if (subcategory)
+        params.subcategory = subcategory.trim().replace(/\s+/g, "-");
 
-      // // Manually construct the query string
-      // const queryString = Object.keys(params)
-      //   .map((key) => `${key}=${params[key]}`)
-      //   .join("&");
-
-      // // Debugging: view query string
-      // console.log("Query String:", queryString);
-
-      // // Make the request with the manually constructed query string
-      // const response = await axios.get(
-      //   `http://localhost:8080/book/filter?${queryString}`
-      // );
-
-      // console.log(response.data);
-      setData(response.data);
+      const response = await getBookByCat(params);
+      setData(response.books);
+      setFilteredData(response.books);
       setFilters({
-        authors: uniqArrayVal(
-          response.data.map((book) => {
-            return `${book.author.firstName} ${book.author.lastName}`;
-          })
-        ),
-        publishers: uniqArrayVal(
-          response.data.map((book) => book.publisher.name)
-        ),
-        languages: uniqArrayVal(
-          response.data.map((book) => {
-            return book.language.replace(
-              book.language.slice(1),
-              book.language.slice(1).toLowerCase()
-            );
-          })
+        authors: response.authors,
+        publishers: response.publishers,
+        languages: response.languages.map((lang) =>
+          lang.replace(lang.slice(1), lang.slice(1).toLowerCase())
         ),
       });
-      // console.log(filters.authors);
     } catch (err) {
       setError("Failed to fetch data.");
       console.error("Error fetching data:", err);
@@ -104,39 +85,67 @@ const CategorySearch = () => {
     setSortParameter(sortParamName);
     setIsOpen(false);
     const temp = [...data];
-    if (sortParamName === sortParameters[0].name) {
-      //sort according to price low to high
+
+    if (sortParamName === sortParameters[0].name)
       temp.sort((a, b) => a.price - b.price);
-    } else if (sortParamName === sortParameters[1].name) {
-      //sort according to price high to low
+    else if (sortParamName === sortParameters[1].name)
       temp.sort((a, b) => b.price - a.price);
-    } else if (sortParamName === sortParameters[2].name) {
-      //sort according to publication newest to oldest
+    else if (sortParamName === sortParameters[2].name)
       temp.sort(
         (a, b) => new Date(b.publicationDate) - new Date(a.publicationDate)
       );
-    } else if (sortParamName === sortParameters[3].name) {
-      //sort according to publication oldest to newest
+    else if (sortParamName === sortParameters[3].name)
       temp.sort(
         (a, b) => new Date(a.publicationDate) - new Date(b.publicationDate)
       );
-    } else {
-      temp.sort((a, b) => a.id - b.id);
-    }
+    else temp.sort((a, b) => a.id - b.id);
+
     setData(temp);
+    setCurrentPage(0); // Reset to first page after sorting
   };
 
-  // Fetch data when URL parameters change
-  useEffect(() => {
-    fetchData();
-  }, [label, category, subcategory]);
+  const handleFilterChange = (filterName, selectedOptions) => {
+    setSelectedFilters((prevFilters) => ({
+      ...prevFilters,
+      [filterName]: selectedOptions,
+    }));
+  };
 
   useEffect(() => {
     fetchData();
   }, []);
-  console.log(data);
 
-  const maxLength = 20;
+  useEffect(() => {
+    let newData = [...data];
+
+    if (selectedFilters.authors.length > 0) {
+      newData = newData.filter((book) =>
+        selectedFilters.authors.includes(
+          `${book.author.firstName} ${book.author.lastName}`
+        )
+      );
+    }
+
+    if (selectedFilters.publishers.length > 0) {
+      newData = newData.filter((book) =>
+        selectedFilters.publishers.includes(book.publisher.name)
+      );
+    }
+
+    setFilteredData(newData);
+  }, [selectedFilters]);
+
+  // Pagination Logic
+  const offset = currentPage * booksPerPage;
+  const currentBooks = filteredData.slice(offset, offset + booksPerPage);
+  const pageCount = Math.ceil(filteredData.length / booksPerPage);
+
+  const handlePageClick = ({ selected }) => {
+    setCurrentPage(selected);
+  };
+
+  console.log(filteredData);
+
   return (
     <>
       <Navbar />
@@ -144,7 +153,7 @@ const CategorySearch = () => {
       {loading && <p>Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
 
-      {!loading && !error && Object.keys(data).length > 0 ? (
+      {!loading && !error && data.length > 0 ? (
         <div className="font-mont mx-20 mb-20">
           <div className="content mt-10">
             <div className="flex items-centre">
@@ -156,14 +165,23 @@ const CategorySearch = () => {
                   <Dropdown
                     filterName="Authors"
                     filterOptions={filters.authors}
+                    onFilterChange={(selectedAuthors) =>
+                      handleFilterChange("authors", selectedAuthors)
+                    }
                   />
                   <Dropdown
                     filterName="Publishers"
                     filterOptions={filters.publishers}
+                    onFilterChange={(selectedAuthors) =>
+                      handleFilterChange("publishers", selectedAuthors)
+                    }
                   />
                   <Dropdown
                     filterName="Languages"
                     filterOptions={filters.languages}
+                    onFilterChange={(selectedAuthors) =>
+                      handleFilterChange("languages", selectedAuthors)
+                    }
                   />
                   <Dropdown filterName="Price Range" filterOptions={prices} />
                   <Dropdown
@@ -178,19 +196,12 @@ const CategorySearch = () => {
                   <div className="heading text-center text-2xl">
                     <h1>
                       {label
-                        .split("-") // Split string by hyphen
-                        .map(
-                          (word) =>
-                            word.charAt(0).toUpperCase() +
-                            word.slice(1).toLowerCase()
-                        ) // Capitalize first letter of each word
-                        .join(" ")}{" "}
-                      {/* Join words with spaces */}
+                        .replace(/-/g, " ")
+                        .replace(/\b\w/g, (char) => char.toUpperCase())}
                     </h1>
                   </div>
                   <div className="sortDropdown flex justify-end">
                     <div className="w-80 border border-gray-300 rounded px-5 py-3 mb-1 relative">
-                      {/* Dropdown Header */}
                       <div
                         className="flex justify-between items-center cursor-pointer"
                         onClick={() => setIsOpen(!isOpen)}
@@ -205,9 +216,8 @@ const CategorySearch = () => {
                         </span>
                       </div>
 
-                      {/* Dropdown Options */}
                       {isOpen && (
-                        <div className="absolute left-0 top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-md z-10 ">
+                        <div className="absolute left-0 top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-md z-10">
                           {sortParameters.map((sortParam, index) => (
                             <div
                               key={index}
@@ -222,62 +232,68 @@ const CategorySearch = () => {
                     </div>
                   </div>
                 </div>
+
                 <div className="books-list flex flex-wrap gap-3 items-center justify-center">
-                  {data.map((book, index) => (
-                    <div className="p-4 pb-5 w-48 mb-5 w border border-gray-300 rounded-md">
-                      {/* Book Image */}
+                  {currentBooks.map((book, index) => (
+                    <div
+                      key={index}
+                      className="p-4 pb-5 w-48 mb-5 border border-gray-300 rounded-md"
+                    >
                       <div className="mb-4">
                         <img
-                          src={book.imgUrl}
+                          src={book.image.split(" ")[0]}
                           alt={book.title}
                           className="w-fit"
                         />
                       </div>
-
-                      {/* Book Name */}
-                      <h1 className="font-mont text-sm text-center m-0">
-                        {book.title.length > maxLength
-                          ? `${book.title.substring(0, maxLength)}...`
-                          : book.title}
-                      </h1>
-
-                      {/* Book Author */}
-                      <p className=" text-gray-500 text-xs text-center m-0">
+                      <Link to={`/book-details/${book.id}`}>
+                        <h1 className="font-mont text-sm text-center m-0">
+                          {book.title.length > 20
+                            ? `${book.title.substring(0, 20)}...`
+                            : book.title}
+                        </h1>
+                      </Link>
+                      <p className="text-gray-500 text-xs text-center m-0">
                         {book.author.firstName} {book.author.lastName}
                       </p>
-
-                      {/* Book Price */}
                       <div className="flex items-center mb-4 justify-center mt-2 font-mont">
                         <h2 className="text-md font-normal mr-2">
-                          {book.price}
+                          ₹{book.price - (book.discount / 100) * book.price}
                         </h2>
-
-                        {/* Display original price */}
-                        <h3 className="text-xs line-through text-gray-400 mr-2">
-                          {typeof book.discount === "number" &&
-                          !isNaN(book.discount)
-                            ? (book.price / (1 - book.discount / 100)).toFixed(
-                                2
-                              )
-                            : "N/A"}
-                        </h3>
-
-                        <p className="text-xs text-green-600">
-                          ({book.discount}%)
+                        <p className="text-xs text-gray-400 font-normal mt-[1px] mr-1 line-through">
+                          ₹{book.price}
+                        </p>
+                        <p className="text-xs mt-[1px] text-green-600">
+                          ({book.discount}% OFF)
                         </p>
                       </div>
-
-                      {/* Buttons */}
                       <div className="flex items-center justify-center gap-6">
+                        {" "}
                         <div className="border border-black px-2 py-0.5 rounded-md hover:bg-black hover:text-white">
-                          <button className="text-sm">Add to Bag</button>
-                        </div>
+                          <button className="text-sm">Add to Bag</button>{" "}
+                        </div>{" "}
                         <div className="hover:text-black">
-                          <CiHeart className="w-6 h-8" />
-                        </div>
+                          <CiHeart className="w-6 h-8" />{" "}
+                        </div>{" "}
                       </div>
                     </div>
                   ))}
+                </div>
+
+                <div className="flex justify-center w-full mt-4">
+                  <ReactPaginate
+                    breakLabel="..."
+                    nextLabel="Next »"
+                    previousLabel="« Prev"
+                    onPageChange={handlePageClick}
+                    pageCount={pageCount}
+                    containerClassName="flex space-x-2 p-2 rounded-lg bg-white"
+                    pageClassName="px-4 py-2 border rounded-md cursor-pointer hover:bg-gray-200"
+                    activeClassName="bg-indigo-500 text-white"
+                    previousClassName="px-4 py-2 border rounded-md cursor-pointer hover:bg-gray-200"
+                    nextClassName="px-4 py-2 border rounded-md cursor-pointer hover:bg-gray-200"
+                    disabledClassName="opacity-50 cursor-not-allowed"
+                  />
                 </div>
               </div>
             </div>
@@ -286,8 +302,10 @@ const CategorySearch = () => {
       ) : (
         !loading && <p>No results found.</p>
       )}
+
       <Footer />
     </>
   );
 };
+
 export default CategorySearch;

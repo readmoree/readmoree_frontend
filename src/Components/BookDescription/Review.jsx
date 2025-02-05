@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { addReview, getReviewsByBook } from "../../services/book";
 import { getUsersByIds } from "../../services/user";
 
-const ReviewComponent = ({ currentUser }) => {
+const ReviewComponent = ({ currentUser, id }) => {
   const [reviews, setReviews] = useState([]);
   const [usersWhoReviewed, setUsersWhoReviewed] = useState({}); // Changed to object for easy access
 
@@ -41,7 +41,7 @@ const ReviewComponent = ({ currentUser }) => {
 
   const fetchReviews = async () => {
     try {
-      const reviewsData = await getReviewsByBook(3);
+      const reviewsData = await getReviewsByBook(id);
       if (reviewsData.length === 0) return;
 
       setReviews(reviewsData);
