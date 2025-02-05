@@ -86,7 +86,7 @@ const Navbar = () => {
   };
 
   const handleSearch = () => {
-    navigate(`/search?searchQuery=${searchQuery}`);
+    navigate(`/search?query=${searchQuery}`);
   };
 
   return (

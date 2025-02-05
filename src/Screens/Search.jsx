@@ -8,7 +8,7 @@ import Filters from "../Components/Search/Filters";
 import SearchContent from "../Components/Search/SearchContent";
 
 const Search = () => {
-  const booksPerPage = 5; // Number of books per page
+  const booksPerPage = 20; // Number of books per page
 
   const sortParameters = [
     { name: "Price: Low To High" },
@@ -41,12 +41,10 @@ const Search = () => {
   const [currentPage, setCurrentPage] = useState(0); // Current page for pagination
 
   // Fetch data function
-  const fetchData = async (searchQuery) => {
+  const fetchData = async (query) => {
     setLoading(true);
     setError(null);
     try {
-      const query = params.get("searchQuery");
-
       const response = await searchBook(query);
       setData(response.books);
       setFilteredData(response.books);
@@ -112,8 +110,8 @@ const Search = () => {
   };
 
   useEffect(() => {
-    const searchQuery = params.get("searchQuery");
-    fetchData(searchQuery);
+    const query = params.get("query");
+    fetchData(query);
   }, [params]);
 
   useEffect(() => {

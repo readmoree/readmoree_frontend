@@ -1,19 +1,14 @@
-import { CiHeart } from "react-icons/ci";
 import React, { useState, useEffect } from "react";
-import { MdKeyboardArrowDown } from "react-icons/md";
-import Dropdown from "../Components/Search/Dropdown";
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
-import { Link, useParams } from "react-router-dom";
-import ReactPaginate from "react-paginate";
+import { useParams } from "react-router-dom";
 import { getBookByCat } from "../services/book";
-import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 import Filters from "../Components/Search/Filters";
 import SearchContent from "../Components/Search/SearchContent";
 
 const CategorySearch = () => {
-  const booksPerPage = 5; // Number of books per page
+  const booksPerPage = 20; // Number of books per page
 
   const sortParameters = [
     { name: "Price: Low To High" },
@@ -40,7 +35,7 @@ const CategorySearch = () => {
     publishers: [],
     languages: [],
     priceRange: [],
-    discountRange: "",
+    discountRange: [],
   });
 
   const [currentPage, setCurrentPage] = useState(0); // Current page for pagination

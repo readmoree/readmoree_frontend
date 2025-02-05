@@ -24,7 +24,7 @@ const BookCard = ({ book }) => {
       </p>
       <div className="flex items-center mb-4 justify-center mt-2 font-mont">
         <h2 className="text-md font-normal mr-2">
-          ₹{book.price - (book.discount / 100) * book.price}
+          ₹{(book.price - (book.discount / 100) * book.price).toFixed(0)}
         </h2>
         <p className="text-xs text-gray-400 font-normal mt-[1px] mr-1 line-through">
           ₹{book.price}
