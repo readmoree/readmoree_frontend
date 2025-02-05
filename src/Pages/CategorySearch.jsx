@@ -7,10 +7,8 @@ import Footer from "../Components/Footer";
 import { Link, useParams } from "react-router-dom";
 import ReactPaginate from "react-paginate";
 import { getBookByCat } from "../services/book";
-
-const uniqArrayVal = (arr) => {
-  return Array.from(new Set(arr.filter(Boolean)));
-};
+import Slider from "rc-slider";
+import "rc-slider/assets/index.css";
 
 const CategorySearch = () => {
   const booksPerPage = 5; // Number of books per page
@@ -21,8 +19,6 @@ const CategorySearch = () => {
     { name: "Newest To Oldest" },
     { name: "Oldest To Newest" },
   ];
-  const prices = ["200-500", "500-1000", "over 1000"];
-  const discounts = ["10% to 25%", "25% to 35%", "35% to 50%"];
 
   const [isOpen, setIsOpen] = useState(false);
   const { label, category, subcategory } = useParams();
@@ -41,7 +37,7 @@ const CategorySearch = () => {
     authors: [],
     publishers: [],
     languages: [],
-    priceRange: "",
+    priceRange: [],
     discountRange: "",
   });
 
@@ -84,7 +80,7 @@ const CategorySearch = () => {
   const changeSortParam = (sortParamName) => {
     setSortParameter(sortParamName);
     setIsOpen(false);
-    const temp = [...data];
+    const temp = [...filteredData];
 
     if (sortParamName === sortParameters[0].name)
       temp.sort((a, b) => a.price - b.price);
@@ -100,7 +96,7 @@ const CategorySearch = () => {
       );
     else temp.sort((a, b) => a.id - b.id);
 
-    setData(temp);
+    setFilteredData(temp);
     setCurrentPage(0); // Reset to first page after sorting
   };
 
@@ -109,6 +105,23 @@ const CategorySearch = () => {
       ...prevFilters,
       [filterName]: selectedOptions,
     }));
+  };
+
+  const handleSliderChange = (type, value) => {
+    setSelectedFilters((prevFilters) => ({
+      ...prevFilters,
+      [type]: value,
+    }));
+  };
+
+  const clearFilters = () => {
+    setSelectedFilters({
+      authors: [],
+      publishers: [],
+      languages: [],
+      priceRange: [],
+      discountRange: [],
+    });
   };
 
   useEffect(() => {
@@ -129,6 +142,31 @@ const CategorySearch = () => {
     if (selectedFilters.publishers.length > 0) {
       newData = newData.filter((book) =>
         selectedFilters.publishers.includes(book.publisher.name)
+      );
+    }
+
+    if (selectedFilters.languages.length > 0) {
+      newData = newData.filter((book) =>
+        selectedFilters.languages.includes(
+          book.language.replace(
+            book.language.slice(1),
+            book.language.slice(1).toLowerCase()
+          )
+        )
+      );
+    }
+
+    if (selectedFilters.priceRange.length > 0) {
+      newData = newData.filter(
+        (book) =>
+          book.price - (book.discount / 100) * book.price <=
+          selectedFilters.priceRange[0]
+      );
+    }
+
+    if (selectedFilters.discountRange.length > 0) {
+      newData = newData.filter(
+        (book) => book.discount >= selectedFilters.discountRange[0]
       );
     }
 
@@ -158,8 +196,16 @@ const CategorySearch = () => {
           <div className="content mt-10">
             <div className="flex items-centre">
               <div className="flex gap-5 flex-col">
-                <div className="mt-5">
+                <div className="mt-5 flex justify-between items-center">
                   <h2 className="text-xl mb-2 ml-1">Filters</h2>
+                  <div className="pr-10">
+                    <button
+                      onClick={clearFilters}
+                      className="text-sm text-blue-500 hover:text-blue-700 px-4 py-2 border border-gray-300 rounded hover:bg-gray-50"
+                    >
+                      Clear Filters
+                    </button>
+                  </div>
                 </div>
                 <div className="filters mr-10 mt-4">
                   <Dropdown
@@ -172,22 +218,65 @@ const CategorySearch = () => {
                   <Dropdown
                     filterName="Publishers"
                     filterOptions={filters.publishers}
-                    onFilterChange={(selectedAuthors) =>
-                      handleFilterChange("publishers", selectedAuthors)
+                    onFilterChange={(selectedPublishers) =>
+                      handleFilterChange("publishers", selectedPublishers)
                     }
                   />
                   <Dropdown
                     filterName="Languages"
                     filterOptions={filters.languages}
-                    onFilterChange={(selectedAuthors) =>
-                      handleFilterChange("languages", selectedAuthors)
+                    onFilterChange={(selectedLanguages) =>
+                      handleFilterChange("languages", selectedLanguages)
                     }
                   />
-                  <Dropdown filterName="Price Range" filterOptions={prices} />
-                  <Dropdown
-                    filterName="Discount Range"
-                    filterOptions={discounts}
-                  />
+                  <div className="min-w-72 border rounded p-4 mb-2 w">
+                    <h3 className="font-semibold text-md mb-2">Price Range</h3>
+                    <Slider
+                      range
+                      step={100}
+                      min={0}
+                      max={2000}
+                      defaultValue={2000}
+                      onChange={(value) =>
+                        handleSliderChange("priceRange", value)
+                      }
+                      trackStyle={{ backgroundColor: "#4C51BF", height: 5 }}
+                      handleStyle={{
+                        borderColor: "#4C51BF",
+                        backgroundColor: "#4C51BF",
+                        height: 20,
+                        width: 20,
+                      }}
+                    />
+                    <div className="flex justify-between text-sm mt-2">
+                      <span>₹{selectedFilters.priceRange[0]}</span>
+                      <span>₹{selectedFilters.priceRange[1]}</span>
+                    </div>
+                  </div>
+                  <div className="min-w-72 border rounded p-4 mb-2 w">
+                    <h3 className="font-semibold text-md mb-2">Discount</h3>
+                    <Slider
+                      range
+                      step={5}
+                      min={0}
+                      max={100}
+                      defaultValue={0}
+                      onChange={(value) =>
+                        handleSliderChange("discountRange", value)
+                      }
+                      trackStyle={{ backgroundColor: "#4C51BF", height: 5 }}
+                      handleStyle={{
+                        borderColor: "#4C51BF",
+                        backgroundColor: "#4C51BF",
+                        height: 20,
+                        width: 20,
+                      }}
+                    />
+                    <div className="flex justify-between text-sm mt-2">
+                      <span>{selectedFilters.discountRange[0]}%</span>
+                      <span>{selectedFilters.discountRange[1]}%</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 

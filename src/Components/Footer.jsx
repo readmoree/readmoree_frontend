@@ -3,15 +3,14 @@ import {
   RiTwitterXFill,
   RiInstagramLine,
   RiFacebookFill,
-  RiMailFill,
   RiMailLine,
 } from "react-icons/ri";
 
 const Footer = () => {
   return (
-    <footer className="w-full bg-white mx-4 px-4">
+    <footer className="w-full bg-white overflow-hidden">
       {/* Newsletter Section */}
-      <div className="w-full px-0 py-8 border-b ">
+      <div className="container mx-auto px-4 py-8 border-b">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="space-y-2">
             <h2 className="text-2xl font-bold text-gray-800">
@@ -47,7 +46,7 @@ const Footer = () => {
       </div>
 
       {/* Main Footer Content */}
-      <div className="w-full px-0 py-12">
+      <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Logo and Description */}
           <div className="lg:col-span-1">
@@ -64,14 +63,10 @@ const Footer = () => {
                 href="mailto:readmoree@gmail.com"
                 className="flex items-center text-gray-600 hover:text-gray-800"
               >
-                {/* <Mail className="mr-2" size={18} /> */}
                 <RiMailLine className="mr-2" size={18} />
                 readmoree@gmail.com
               </a>
-              <p className="flex items-center text-gray-600">
-                {/* <Phone className="mr-2" size={18} /> */}
-                +917666045526
-              </p>
+              <p className="flex items-center text-gray-600">+917666045526</p>
             </div>
           </div>
 
@@ -156,7 +151,7 @@ const Footer = () => {
 
       {/* Copyright */}
       <div className="bg-purple-200 py-4">
-        <div className="w-full px-0">
+        <div className="container mx-auto px-4">
           <p className="text-center text-gray-600">
             © 2024 ReadMore Bookstores Pvt. Ltd. All Rights Reserved.
           </p>
