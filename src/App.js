@@ -19,6 +19,7 @@ import OrderDashboard from "./Pages/Admin/OrdersPage";
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
 import ProductsPage from "./Pages/Admin/ProductPage";
 import { registerLicense } from "@syncfusion/ej2-base";
+import Search from "./Screens/Search";
 
 let key =
   "Ngo9BigBOggjHTQxAR8/V1NMaF1cXmhLYVJ3WmFZfVtgdV9HZFZSQWYuP1ZhSXxWdkdjXX9fcXBWQ2JbWUM=";
@@ -31,6 +32,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<HomePage />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
+        <Route path="/search" element={<Search />} />
         <Route path="/search/:label" element={<CategorySearch />} />
         <Route path="/search/:label/:category" element={<CategorySearch />} />
         <Route

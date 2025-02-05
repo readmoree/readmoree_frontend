@@ -30,6 +30,7 @@ const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [hoveredCategory, setHoveredCategory] = useState(null);
   const [isCategoriesDivOpen, setIsCategoriesDivOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Check if user is logged in (from localStorage, API, etc.)
   useEffect(() => {
@@ -84,6 +85,10 @@ const Navbar = () => {
     }
   };
 
+  const handleSearch = () => {
+    navigate(`/search?searchQuery=${searchQuery}`);
+  };
+
   return (
     <div className="font-sans">
       {/* Navigation Bar */}
@@ -103,8 +108,12 @@ const Navbar = () => {
             type="text"
             placeholder="Search by Title, Author, ISBN"
             className="w-full px-4 py-2 rounded-l-md focus:outline-none"
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
-          <button className="bg-black text-white px-4 py-3 rounded-r-md">
+          <button
+            className="bg-black text-white px-4 py-3 rounded-r-md"
+            onClick={handleSearch}
+          >
             <FiSearch />
           </button>
         </div>

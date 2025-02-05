@@ -1,7 +1,7 @@
 import { CiHeart } from "react-icons/ci";
 import React, { useState, useEffect } from "react";
 import { MdKeyboardArrowDown } from "react-icons/md";
-import Dropdown from "../Components/Dropdown";
+import Dropdown from "../Components/Search/Dropdown";
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
 import { Link, useParams } from "react-router-dom";
@@ -9,6 +9,8 @@ import ReactPaginate from "react-paginate";
 import { getBookByCat } from "../services/book";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
+import Filters from "../Components/Search/Filters";
+import SearchContent from "../Components/Search/SearchContent";
 
 const CategorySearch = () => {
   const booksPerPage = 5; // Number of books per page
@@ -187,7 +189,6 @@ const CategorySearch = () => {
   return (
     <>
       <Navbar />
-
       {loading && <p>Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
 
@@ -195,196 +196,22 @@ const CategorySearch = () => {
         <div className="font-mont mx-20 mb-20">
           <div className="content mt-10">
             <div className="flex items-centre">
-              <div className="flex gap-5 flex-col">
-                <div className="mt-5 flex justify-between items-center">
-                  <h2 className="text-xl mb-2 ml-1">Filters</h2>
-                  <div className="pr-10">
-                    <button
-                      onClick={clearFilters}
-                      className="text-sm text-blue-500 hover:text-blue-700 px-4 py-2 border border-gray-300 rounded hover:bg-gray-50"
-                    >
-                      Clear Filters
-                    </button>
-                  </div>
-                </div>
-                <div className="filters mr-10 mt-4">
-                  <Dropdown
-                    filterName="Authors"
-                    filterOptions={filters.authors}
-                    onFilterChange={(selectedAuthors) =>
-                      handleFilterChange("authors", selectedAuthors)
-                    }
-                  />
-                  <Dropdown
-                    filterName="Publishers"
-                    filterOptions={filters.publishers}
-                    onFilterChange={(selectedPublishers) =>
-                      handleFilterChange("publishers", selectedPublishers)
-                    }
-                  />
-                  <Dropdown
-                    filterName="Languages"
-                    filterOptions={filters.languages}
-                    onFilterChange={(selectedLanguages) =>
-                      handleFilterChange("languages", selectedLanguages)
-                    }
-                  />
-                  <div className="min-w-72 border rounded p-4 mb-2 w">
-                    <h3 className="font-semibold text-md mb-2">Price Range</h3>
-                    <Slider
-                      range
-                      step={100}
-                      min={0}
-                      max={2000}
-                      defaultValue={2000}
-                      onChange={(value) =>
-                        handleSliderChange("priceRange", value)
-                      }
-                      trackStyle={{ backgroundColor: "#4C51BF", height: 5 }}
-                      handleStyle={{
-                        borderColor: "#4C51BF",
-                        backgroundColor: "#4C51BF",
-                        height: 20,
-                        width: 20,
-                      }}
-                    />
-                    <div className="flex justify-between text-sm mt-2">
-                      <span>₹{selectedFilters.priceRange[0]}</span>
-                      <span>₹{selectedFilters.priceRange[1]}</span>
-                    </div>
-                  </div>
-                  <div className="min-w-72 border rounded p-4 mb-2 w">
-                    <h3 className="font-semibold text-md mb-2">Discount</h3>
-                    <Slider
-                      range
-                      step={5}
-                      min={0}
-                      max={100}
-                      defaultValue={0}
-                      onChange={(value) =>
-                        handleSliderChange("discountRange", value)
-                      }
-                      trackStyle={{ backgroundColor: "#4C51BF", height: 5 }}
-                      handleStyle={{
-                        borderColor: "#4C51BF",
-                        backgroundColor: "#4C51BF",
-                        height: 20,
-                        width: 20,
-                      }}
-                    />
-                    <div className="flex justify-between text-sm mt-2">
-                      <span>{selectedFilters.discountRange[0]}%</span>
-                      <span>{selectedFilters.discountRange[1]}%</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <Filters
+                filters={filters}
+                selectedFilters={selectedFilters}
+                handleFilterChange={handleFilterChange}
+                handleSliderChange={handleSliderChange}
+                clearFilters={clearFilters}
+              />
 
-              <div>
-                <div className="flex justify-between items-center mb-3 p-4">
-                  <div className="heading text-center text-2xl">
-                    <h1>
-                      {label
-                        .replace(/-/g, " ")
-                        .replace(/\b\w/g, (char) => char.toUpperCase())}
-                    </h1>
-                  </div>
-                  <div className="sortDropdown flex justify-end">
-                    <div className="w-80 border border-gray-300 rounded px-5 py-3 mb-1 relative">
-                      <div
-                        className="flex justify-between items-center cursor-pointer"
-                        onClick={() => setIsOpen(!isOpen)}
-                      >
-                        <h2 className="font-semibold text-md">
-                          Sort By : {sortParameter || "Relevance"}
-                        </h2>
-                        <span
-                          className={`transform ${isOpen ? "rotate-180" : ""}`}
-                        >
-                          <MdKeyboardArrowDown />
-                        </span>
-                      </div>
-
-                      {isOpen && (
-                        <div className="absolute left-0 top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-md z-10">
-                          {sortParameters.map((sortParam, index) => (
-                            <div
-                              key={index}
-                              onClick={() => changeSortParam(sortParam.name)}
-                              className="hover:bg-lilac flex items-center justify-between p-2 text-gray-700 hover:bg-gray-00"
-                            >
-                              <h1 className="text-md py-1">{sortParam.name}</h1>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="books-list flex flex-wrap gap-3 items-center justify-center">
-                  {currentBooks.map((book, index) => (
-                    <div
-                      key={index}
-                      className="p-4 pb-5 w-48 mb-5 border border-gray-300 rounded-md"
-                    >
-                      <div className="mb-4">
-                        <img
-                          src={book.image.split(" ")[0]}
-                          alt={book.title}
-                          className="w-fit"
-                        />
-                      </div>
-                      <Link to={`/book-details/${book.id}`}>
-                        <h1 className="font-mont text-sm text-center m-0">
-                          {book.title.length > 20
-                            ? `${book.title.substring(0, 20)}...`
-                            : book.title}
-                        </h1>
-                      </Link>
-                      <p className="text-gray-500 text-xs text-center m-0">
-                        {book.author.firstName} {book.author.lastName}
-                      </p>
-                      <div className="flex items-center mb-4 justify-center mt-2 font-mont">
-                        <h2 className="text-md font-normal mr-2">
-                          ₹{book.price - (book.discount / 100) * book.price}
-                        </h2>
-                        <p className="text-xs text-gray-400 font-normal mt-[1px] mr-1 line-through">
-                          ₹{book.price}
-                        </p>
-                        <p className="text-xs mt-[1px] text-green-600">
-                          ({book.discount}% OFF)
-                        </p>
-                      </div>
-                      <div className="flex items-center justify-center gap-6">
-                        {" "}
-                        <div className="border border-black px-2 py-0.5 rounded-md hover:bg-black hover:text-white">
-                          <button className="text-sm">Add to Bag</button>{" "}
-                        </div>{" "}
-                        <div className="hover:text-black">
-                          <CiHeart className="w-6 h-8" />{" "}
-                        </div>{" "}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="flex justify-center w-full mt-4">
-                  <ReactPaginate
-                    breakLabel="..."
-                    nextLabel="Next »"
-                    previousLabel="« Prev"
-                    onPageChange={handlePageClick}
-                    pageCount={pageCount}
-                    containerClassName="flex space-x-2 p-2 rounded-lg bg-white"
-                    pageClassName="px-4 py-2 border rounded-md cursor-pointer hover:bg-gray-200"
-                    activeClassName="bg-indigo-500 text-white"
-                    previousClassName="px-4 py-2 border rounded-md cursor-pointer hover:bg-gray-200"
-                    nextClassName="px-4 py-2 border rounded-md cursor-pointer hover:bg-gray-200"
-                    disabledClassName="opacity-50 cursor-not-allowed"
-                  />
-                </div>
-              </div>
+              <SearchContent
+                label={label}
+                sortParameters={sortParameters}
+                changeSortParam={changeSortParam}
+                currentBooks={currentBooks}
+                handlePageClick={handlePageClick}
+                pageCount={pageCount}
+              />
             </div>
           </div>
         </div>

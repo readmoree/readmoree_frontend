@@ -21,8 +21,6 @@ export async function getBookByCat(params) {
     const response = await axios.get(
       `${BOOK_SERVICE_URL}/book/public/filter?${queryString}`
     );
-    console.log(`${BOOK_SERVICE_URL}/book/public/filter?${queryString}`);
-    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error(error);
@@ -33,6 +31,19 @@ export async function getBookByCat(params) {
 export async function getBookById(id) {
   try {
     const response = await axios.get(`${BOOK_SERVICE_URL}/book/public/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function searchBook(query) {
+  try {
+    const response = await axios.get(
+      `${BOOK_SERVICE_URL}/book/public/search?searchKeyword=${query}`
+    );
+    console.log(response);
     return response.data;
   } catch (error) {
     console.error(error);
