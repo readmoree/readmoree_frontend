@@ -4,12 +4,12 @@ import { CiHeart } from "react-icons/ci";
 
 const BookCard = ({ book }) => {
   return (
-    <div className="p-4 pb-5 w-48 mb-5 border border-gray-300 rounded-md">
-      <div className="mb-4">
+    <div className="p-4 w-48 mb-5 border border-gray-300 rounded-md">
+      <div className="mb-4 w-full h-[250px] overflow-hidden">
         <img
           src={book.image.split(" ")[0]}
           alt={book.title}
-          className="w-fit"
+          className="w-full h-full object-cover"
         />
       </div>
       <Link to={`/book-details/${book.id}`}>
@@ -22,9 +22,9 @@ const BookCard = ({ book }) => {
       <p className="text-gray-500 text-xs text-center m-0">
         {book.author.firstName} {book.author.lastName}
       </p>
-      <div className="flex items-center mb-4 justify-center mt-2 font-mont">
+      <div className="flex items-center mb-4 justify-center mt-3 font-mont">
         <h2 className="text-md font-normal mr-2">
-          ₹{(book.price - (book.discount / 100) * book.price).toFixed(0)}
+          ₹{(book.price - (book.discount / 100) * book.price).toFixed(2)}
         </h2>
         <p className="text-xs text-gray-400 font-normal mt-[1px] mr-1 line-through">
           ₹{book.price}
@@ -34,8 +34,8 @@ const BookCard = ({ book }) => {
         </p>
       </div>
       <div className="flex items-center justify-center gap-6">
-        <div className="border border-black px-2 py-0.5 rounded-md hover:bg-black hover:text-white">
-          <button className="text-sm">Add to Bag</button>
+        <div className="border border-black px-2 py-0.5 rounded-md hover:bg-black hover:text-white flex items-center justify-center">
+          <button className="text-sm mb-1 pt-1">Add to Bag</button>
         </div>
         <div className="hover:text-black">
           <CiHeart className="w-6 h-8" />

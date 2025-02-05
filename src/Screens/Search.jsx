@@ -110,7 +110,7 @@ const Search = () => {
   };
 
   useEffect(() => {
-    const query = params.get("query");
+    const query = params.get("query") || "";
     fetchData(query);
   }, [params]);
 
@@ -189,7 +189,7 @@ const Search = () => {
               />
 
               <SearchContent
-                label={`Search results for ${params.get("searchQuery")}`}
+                label={`Search results for ${params.get("searchQuery") || ""}`}
                 sortParameters={sortParameters}
                 changeSortParam={changeSortParam}
                 currentBooks={currentBooks}
