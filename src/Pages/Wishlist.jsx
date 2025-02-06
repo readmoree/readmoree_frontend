@@ -113,7 +113,12 @@ const Wishlist = () => {
                 alt={book.title}
                 className="h-48 w-fit mb-2"
               />
-              <h3 className="text-md font-semibold">{book.title}</h3>
+              <h3 className="text-md font-semibold">
+                {" "}
+                {book.title.length > 20
+                  ? `${book.title.substring(0, 20)}...`
+                  : book.title}
+              </h3>
               <p className="text-sm text-lilac_dark">
                 {book.author.firstName} {book.author.lastName}
               </p>

@@ -108,6 +108,7 @@ const CartScreen = () => {
         price: book.price,
       }));
       console.log(orderDetails);
+      console.log(process.env.REACT_APP_ORDER_SERVICE_URL);
       const orderResponse = await axios.post(
         `${process.env.REACT_APP_ORDER_SERVICE_URL}/orders/placeOrder`,
         orderDetails,
@@ -117,7 +118,7 @@ const CartScreen = () => {
           },
           params: {
             addressId: selectedAddress.addressId,
-            paymentMethod: "COD",
+            paymentMethod: "UPI",
           },
         }
       );

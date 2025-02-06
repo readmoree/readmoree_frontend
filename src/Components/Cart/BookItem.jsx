@@ -22,8 +22,9 @@ const BookItem = ({
         return;
       }
 
+      console.log(process.env.REACT_APP_CART_SERVICE_URL);
       const response = await axios.delete(
-        `${process.env_REACT_APP_CART_SERVICE_API}/cart/${details.id}`,
+        `${process.env.REACT_APP_CART_SERVICE_URL}/cart/${details.id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -56,7 +57,7 @@ const BookItem = ({
       }
 
       const response = await axios.post(
-        `${process.env.REACT_APP_CART_SERVICE}/transfer-to-wishlist/${details.id}`,
+        `${process.env.REACT_APP_CART_SERVICE_URL}/transfer-to-wishlist/${details.id}`,
         {},
         {
           headers: {
@@ -92,7 +93,7 @@ const BookItem = ({
       }
 
       const response = await axios.put(
-        `${process.env.REACT_APP_CART_SERVICE}/cart/${details.id}`,
+        `${process.env.REACT_APP_CART_SERVICE_URL}/cart/${details.id}`,
         { quantity: newQty },
         {
           headers: {
@@ -122,7 +123,11 @@ const BookItem = ({
           className="w-20 h-28 object-cover rounded-md"
         />
         <div className="ml-4">
-          <h3 className="font-semibold text-lg">{details.title}</h3>
+          <h3 className="font-semibold text-lg">
+            {details.title.length > 20
+              ? `${details.title.substring(0, 20)}...`
+              : details.title}
+          </h3>
           <p className="text-gray-600 mt-1">
             ₹ {details.price}{" "}
             <span className="line-through text-sm text-gray-500">
