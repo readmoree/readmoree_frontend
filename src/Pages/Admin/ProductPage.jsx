@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus, X, Edit, ChevronDown } from "lucide-react";
 import * as Dialog from "@radix-ui/react-dialog";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
@@ -6,6 +6,7 @@ import Sidebar from "../../Components/Admin/AdminSidebr";
 import AdminHeader from "../../Components/Admin/AdminHeader";
 import { FiSearch } from "react-icons/fi";
 import BookList from "../../Components/Admin/BookList";
+import axios from "axios";
 const categories = [
   "Fiction",
   "Non-Fiction",
@@ -34,7 +35,8 @@ const initialBooks = [
 ];
 
 export default function ProductsPage() {
-  const [books, setBooks] = useState(initialBooks);
+  // const [books, setBooks] = useState(initialBooks);
+  const [booksData, setBooksData] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("Fiction");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isInventoryModalOpen, setIsInventoryModalOpen] = useState(false);
@@ -57,32 +59,49 @@ export default function ProductsPage() {
     stock: "",
   });
 
+  const getAllBooks = async () => {
+    try {
+      const response = await axios.get(
+        "http://192.168.0.104:8080/book/public/all"
+      );
+      if (response.status == 200) {
+        setBooksData(response.data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    getAllBooks();
+  }, []);
+
   const handleChange = (e) => {
-    setNewBook({ ...newBook, [e.target.name]: e.target.value });
+    // setNewBook({ ...newBook, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    setBooks([
-      ...books,
-      { ...newBook, id: books.length + 1, stock: Number(newBook.stock) || 0 },
-    ]);
-    setIsModalOpen(false);
-    setNewBook({
-      title: "",
-      author: "",
-      publisher: "",
-      image: "",
-      price: "",
-      publicationDate: "",
-      pageCount: "",
-      isbn: "",
-      language: "",
-      binding: "",
-      description: "",
-      category: "",
-      stock: "",
-    });
+    //   e.preventDefault();
+    //   setBooks([
+    //     ...books,
+    //     { ...newBook, id: books.length + 1, stock: Number(newBook.stock) || 0 },
+    //   ]);
+    //   setIsModalOpen(false);
+    //   setNewBook({
+    //     title: "",
+    //     author: "",
+    //     publisher: "",
+    //     image: "",
+    //     price: "",
+    //     publicationDate: "",
+    //     pageCount: "",
+    //     isbn: "",
+    //     language: "",
+    //     binding: "",
+    //     description: "",
+    //     category: "",
+    //     stock: "",
+    //   });
   };
 
   const openInventoryModal = (book) => {
@@ -92,23 +111,23 @@ export default function ProductsPage() {
   };
 
   const handleInventoryUpdate = (e) => {
-    e.preventDefault();
-    if (selectedBook) {
-      setBooks(
-        books.map((book) =>
-          book.id === selectedBook.id
-            ? { ...book, stock: Number(newStock) }
-            : book
-        )
-      );
-      setIsInventoryModalOpen(false);
-    }
+    //   e.preventDefault();
+    //   if (selectedBook) {
+    //     setBooks(
+    //       books.map((book) =>
+    //         book.id === selectedBook.id
+    //           ? { ...book, stock: Number(newStock) }
+    //           : book
+    //       )
+    //     );
+    //     setIsInventoryModalOpen(false);
+    //   }
   };
 
-  const filteredBooks =
-    selectedCategory === "All"
-      ? books
-      : books.filter((book) => book.category === selectedCategory);
+  // const filteredBooks =
+  //   selectedCategory === "All"
+  //     ? books
+  //     : books.filter((book) => book.category === selectedCategory);
 
   return (
     <div className="flex max-h-screen">
@@ -370,7 +389,7 @@ export default function ProductsPage() {
               </div>
             ))}
           </div> */}
-          <BookList />
+          <BookList allBooks={booksData} />
         </div>
       </div>
 

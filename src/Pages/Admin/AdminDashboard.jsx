@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import StatisticsPage from "../../Components/Admin/StatisticsPage";
 import Sidebar from "../../Components/Admin/AdminSidebr";
 import AdminHeader from "../../Components/Admin/AdminHeader";
+import LoadingPage from "../LoadingPage";
 
 const AnimatedCard = ({ title, value, delay }) => {
   const [count, setCount] = useState(0);
@@ -41,8 +42,11 @@ const AnimatedCard = ({ title, value, delay }) => {
 };
 
 const AdminDashboard = () => {
+  const [loading, setLoading] = useState(true);
   const totalSales = 12500; // Example data
   const completedOrders = 230;
+  const totalBooks = 16700; // Example data
+  const activeUsers = 2002;
 
   const monthlySalesData = [
     { month: "Jan", sales: 1200 },
@@ -93,29 +97,38 @@ const AdminDashboard = () => {
         "https://www.crossword.in/cdn/shop/products/71sru2dKW4L_460x@2x.jpg?v=1685185758",
     },
   ];
+  useEffect(() => {
+    setTimeout(() => setLoading(false), 1000); // Simulating a loading delay
+  }, []);
 
   return (
     <>
-      <div className="flex h-screen bg-gray-100">
-        {/* Sidebar */}
-        <Sidebar />
+      {loading ? (
+        <LoadingPage />
+      ) : (
+        <div className="flex h-screen bg-white overflow-x-hidden">
+          {/* Sidebar */}
+          <Sidebar />
 
-        {/* Main Dashboard Content */}
-        <div className="flex flex-col w-full">
-          <div>
-            <AdminHeader />
-          </div>
-          <div className="flex-1 p-6 overflow-y-auto">
-            <StatisticsPage
-              totalSales={totalSales}
-              completedOrders={completedOrders}
-              monthlySalesData={monthlySalesData}
-              bestSellers={bestSellers}
-              recentOrders={recentOrders}
-            />
+          {/* Main Dashboard Content */}
+          <div className="flex flex-col w-full">
+            <div className="">
+              <AdminHeader />
+            </div>
+            <div className="flex-1 p-6 overflow-y-auto ">
+              <StatisticsPage
+                totalSales={totalSales}
+                completedOrders={completedOrders}
+                monthlySalesData={monthlySalesData}
+                bestSellers={bestSellers}
+                recentOrders={recentOrders}
+                totalBooks={totalBooks}
+                activeUsers={activeUsers}
+              />
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </>
   );
 };

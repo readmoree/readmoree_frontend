@@ -19,8 +19,13 @@ import OrderDashboard from "./Pages/Admin/OrdersPage";
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
 import ProductsPage from "./Pages/Admin/ProductPage";
 import { registerLicense } from "@syncfusion/ej2-base";
+<<<<<<< Updated upstream
 import Search from "./Screens/Search";
 
+=======
+import Unauthorized from "./Pages/Unauthorized";
+import NotFound from "./Pages/NotFound";
+>>>>>>> Stashed changes
 let key =
   "Ngo9BigBOggjHTQxAR8/V1NMaF1cXmhLYVJ3WmFZfVtgdV9HZFZSQWYuP1ZhSXxWdkdjXX9fcXBWQ2JbWUM=";
 registerLicense(key);
@@ -42,15 +47,7 @@ function App() {
         <Route path="/book-details/:id" element={<BookDescription />} />
 
         {/* customer routers */}
-        <Route
-          path="/register"
-          element={
-            <ProtectedRoute
-              element={<Register />}
-              allowedRoles={["CUSTOMER"]}
-            />
-          }
-        />
+        <Route path="/register" element={<Register />} />
         <Route
           path="/profile"
           element={
@@ -118,11 +115,8 @@ function App() {
         />
 
         {/* utility routes */}
-        <Route
-          path="/unauthorized"
-          element={<h1>Your Are not Authorized to access this page</h1>}
-        />
-        <Route path="*" element={<h1>404 Not Found</h1>} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <ToastContainer />
     </>

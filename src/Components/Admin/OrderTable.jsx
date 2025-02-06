@@ -2,7 +2,7 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
 import React, { useState } from "react";
 
-const OrderTable = ({ orders, handleActionClick }) => {
+const OrderTable = ({ orders, customers, addresses, handleActionClick }) => {
   const [expanded, setExpanded] = useState(null);
 
   const toggleExpand = (index) => {
@@ -30,24 +30,43 @@ const OrderTable = ({ orders, handleActionClick }) => {
                 <tr className="border-t border-gray-200">
                   <td className="py-3 px-4">{order.orderId}</td>
                   <td className="py-3 px-4 flex flex-col gap-1">
-                    <div className="font-bold">{order.customer}</div>
-                    <div className="text-sm">{order.email}</div>
+                    <div className="font-bold">
+                      {customers[index]?.firstName || "No"}{" "}
+                      {customers[index]?.lastName || "Name"}
+                      {/* XYZ XYZ */}
+                    </div>
+                    <div className="text-sm">
+                      {customers[index]?.email || "example@gmail.com"}
+                    </div>
                   </td>
-                  <td className="py-3 px-4">{order.date}</td>
-                  <td className="py-3 px-4">${order.total.toFixed(2)}</td>
+                  <td className="py-3 px-4">
+                    {order.orderDetails[0]?.orderDate
+                      ? new Date(
+                          order.orderDetails[0].orderDate
+                        ).toLocaleDateString("en-GB", {
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric",
+                        })
+                      : "No Date"}
+                  </td>
+
+                  <td className="py-3 px-4">
+                    ${order.orderDetails[0].orderTotal || 2222}
+                  </td>
                   <td className="py-3 px-4">
                     <span
                       className={`px-2 py-1 text-sm rounded-md ${
-                        order.status === "Pending"
+                        order.orderDetails[0].orderStatus === "PENDING"
                           ? "bg-yellow-100 text-yellow-700"
-                          : order.status === "Shipped"
+                          : order.status === "SHIPPED"
                           ? "bg-blue-100 text-blue-700"
-                          : order.status === "Dispatched"
+                          : order.status === "DISPATCHED"
                           ? "bg-teal-100 text-teal-700"
                           : "bg-green-100 text-green-700"
                       }`}
                     >
-                      {order.status}
+                      {order.orderDetails[0].orderStatus}
                     </span>
                   </td>
                   <td className="py-3 px-4 hover:underline">
@@ -64,29 +83,31 @@ const OrderTable = ({ orders, handleActionClick }) => {
                     </button>
                   </td>
                   <td>
-                    {order.status === "Pending" && (
+                    {order.orderDetails[0].orderStatus === "PENDING" && (
                       <button
                         className="bg-teal-400 text-white px-3 py-1 rounded w-24"
                         onClick={() =>
-                          handleActionClick("Dispatch", order.orderId)
+                          handleActionClick("DISPATCHED", order.orderId)
                         }
                       >
                         Dispatch
                       </button>
                     )}
-                    {order.status === "Dispatched" && (
+                    {order.orderDetails[0].orderStatus === "DISPATCHED" && (
                       <button
                         className="bg-blue-400 text-white px-3 py-1 rounded w-24"
-                        onClick={() => handleActionClick("Ship", order.orderId)}
+                        onClick={() =>
+                          handleActionClick("SHIPPED", order.orderId)
+                        }
                       >
                         Ship
                       </button>
                     )}
-                    {order.status === "Shipped" && (
+                    {order.orderDetails[0].orderStatus === "SHIPPED" && (
                       <button
                         className="bg-green-400 text-white px-3 py-1 rounded w-24"
                         onClick={() =>
-                          handleActionClick("Delivered", order.orderId)
+                          handleActionClick("DELIVERED", order.orderId)
                         }
                       >
                         Delivered
@@ -98,12 +119,14 @@ const OrderTable = ({ orders, handleActionClick }) => {
                   <tr className="bg-gray-50">
                     <td colSpan="6" className="p-4">
                       {/* Ordered Books Section */}
+                      <h4 className="font-semibold mb-2">Order ID:</h4>
+                      <ul>{order.orderId}</ul>
                       <h4 className="font-semibold mb-2">Ordered Books:</h4>
                       <ul className="space-y-1">
-                        {order.books.map((book, bookIndex) => (
+                        {order.orderDetails.map((book, bookIndex) => (
                           <li key={bookIndex} className="flex justify-between">
                             <span>
-                              {book.title} (x{book.quantity})
+                              {book.bookName} (x{book.quantity})
                             </span>
                             <span className="text-gray-700">
                               ${book.price.toFixed(2)}
@@ -119,15 +142,17 @@ const OrderTable = ({ orders, handleActionClick }) => {
                         </h4>
                         <p>
                           <span className="font-medium">Address:</span>{" "}
-                          {order.customerAddress}
+                          {addresses.flatNo} {addresses.buildingName}{" "}
+                          {addresses.locality} {addresses.area} {addresses.city}{" "}
+                          {addresses.state} {addresses.pincode}
                         </p>
                         <p>
                           <span className="font-medium">Payment Mode:</span>{" "}
-                          {order.paymentMode}
+                          {order.orderDetails[0].paymentMethod}
                         </p>
                         <p>
                           <span className="font-medium">Payment ID:</span>{" "}
-                          {order.PaymentId}
+                          {order.orderDetails[0].paymentId}
                         </p>
                       </div>
                     </td>

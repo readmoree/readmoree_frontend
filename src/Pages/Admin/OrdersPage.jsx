@@ -3,177 +3,153 @@ import AdminHeader from "../../Components/Admin/AdminHeader";
 import OrderTable from "../../Components/Admin/OrderTable";
 import OrderCard from "../../Components/Admin/OrderCard";
 import Sidebar from "../../Components/Admin/AdminSidebr";
+import axios from "axios";
+import { toast } from "react-toastify";
+import {
+  getCustomers,
+  getAddresses,
+} from "../../services/AdminServices/orders";
 
 const OrderPage = () => {
-  const ordersData = [
-    {
-      orderId: "ORD12352",
-      customer: "Liam Johnson",
-      email: "liam.j@gmail.com",
-      date: "2024-02-06",
-      total: 42.99,
-      status: "Shipped",
-      books: [{ title: "The Alchemist", quantity: 1, price: 42.99 }],
-      customerAddress: "101 Green Street, Seattle, WA, USA",
-      paymentMode: "Credit Card",
-      PaymentId: "PAY-98761234",
-    },
-    {
-      orderId: "ORD12353",
-      customer: "Olivia Taylor",
-      email: "olivia.t@gmail.com",
-      date: "2024-02-06",
-      total: 35.5,
-      status: "Pending",
-      books: [{ title: "Rich Dad Poor Dad", quantity: 1, price: 35.5 }],
-      customerAddress: "23 King Street, London, UK",
-      paymentMode: "Debit Card",
-      PaymentId: "PAY-34567890",
-    },
-    {
-      orderId: "ORD12354",
-      customer: "Noah Davis",
-      email: "noah.d@gmail.com",
-      date: "2024-02-07",
-      total: 49.99,
-      status: "Delivered",
-      books: [{ title: "The Four Agreements", quantity: 1, price: 49.99 }],
-      customerAddress: "77 Queen Ave, Sydney, Australia",
-      paymentMode: "PayPal",
-      PaymentId: "PAY-56789123",
-    },
-    {
-      orderId: "ORD12355",
-      customer: "Emma White",
-      email: "emma.w@gmail.com",
-      date: "2024-02-07",
-      total: 60.0,
-      status: "Dispatched",
-      books: [{ title: "The 5 AM Club", quantity: 2, price: 30.0 }],
-      customerAddress: "5 River Road, Mumbai, India",
-      paymentMode: "Google Pay",
-      PaymentId: "PAY-12398745",
-    },
-    {
-      orderId: "ORD12356",
-      customer: "James Anderson",
-      email: "james.a@gmail.com",
-      date: "2024-02-08",
-      total: 25.75,
-      status: "Pending",
-      books: [{ title: "The Art of War", quantity: 1, price: 25.75 }],
-      customerAddress: "88 Lake View Drive, Berlin, Germany",
-      paymentMode: "UPI",
-      PaymentId: "PAY-78965412",
-    },
-    {
-      orderId: "ORD12357",
-      customer: "Isabella Martinez",
-      email: "isabella.m@gmail.com",
-      date: "2024-02-08",
-      total: 37.99,
-      status: "Shipped",
-      books: [
-        {
-          title: "Mindset: The New Psychology of Success",
-          quantity: 1,
-          price: 37.99,
-        },
-      ],
-      customerAddress: "12 Maple Avenue, Toronto, Canada",
-      paymentMode: "Cash on Delivery",
-      PaymentId: "COD-987123654",
-    },
-    {
-      orderId: "ORD12358",
-      customer: "William Clark",
-      email: "william.c@gmail.com",
-      date: "2024-02-09",
-      total: 55.0,
-      status: "Delivered",
-      books: [{ title: "Zero to One", quantity: 1, price: 55.0 }],
-      customerAddress: "100 Mountain View, Dubai, UAE",
-      paymentMode: "Credit Card",
-      PaymentId: "PAY-765432189",
-    },
-    {
-      orderId: "ORD12359",
-      customer: "Sophia Hall",
-      email: "sophia.h@gmail.com",
-      date: "2024-02-10",
-      total: 48.99,
-      status: "Dispatched",
-      books: [
-        { title: "The Monk Who Sold His Ferrari", quantity: 1, price: 48.99 },
-      ],
-      customerAddress: "22 Ocean Drive, Cape Town, South Africa",
-      paymentMode: "Debit Card",
-      PaymentId: "PAY-951357468",
-    },
-    {
-      orderId: "ORD12360",
-      customer: "Benjamin Lewis",
-      email: "benjamin.l@gmail.com",
-      date: "2024-02-11",
-      total: 39.99,
-      status: "Shipped",
-      books: [
-        {
-          title: "The 7 Habits of Highly Effective People",
-          quantity: 1,
-          price: 39.99,
-        },
-      ],
-      customerAddress: "19 Sunflower Lane, Paris, France",
-      paymentMode: "PayPal",
-      PaymentId: "PAY-258369147",
-    },
-    {
-      orderId: "ORD12361",
-      customer: "Charlotte King",
-      email: "charlotte.k@gmail.com",
-      date: "2024-02-12",
-      total: 58.5,
-      status: "Pending",
-      books: [
-        {
-          title: "Grit: The Power of Passion and Perseverance",
-          quantity: 1,
-          price: 58.5,
-        },
-      ],
-      customerAddress: "33 Moonlight Blvd, Singapore",
-      paymentMode: "Google Pay",
-      PaymentId: "PAY-357159246",
-    },
-  ];
+  // 1. Initialize State Variables
   const [filter, setFilter] = useState("All");
-  const [orders, setOrders] = useState(ordersData);
-  const [filteredOrders, setFilteredOrders] = useState(orders);
+  const [orders, setOrders] = useState([]);
+  const [customersData, setCustomersData] = useState([]);
+  const [addressData, setAddressData] = useState([]);
+  const [filteredOrders, setFilteredOrders] = useState([]);
 
-  // Filter orders based on the selected statu
+  // 2. Function to Fetch Orders
+  const getAllOrders = async () => {
+    try {
+      const token = sessionStorage.getItem("token");
+      const response = await axios.get(
+        "http://192.168.0.104:8081/orders/admin/allOrders",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (response.status === 200) {
+        console.log(response.data);
+        const ordersArray = Object.keys(response.data).map((orderId) => ({
+          orderId,
+          orderDetails: response.data[orderId],
+          customerId: response.data[orderId][0].customerId,
+          addressId: response.data[orderId][0].addressId,
+        }));
+        setOrders(ordersArray);
+        console.log(ordersArray);
+      } else {
+        console.error("Failed to fetch orders. Status:", response.status);
+      }
+    } catch (error) {
+      console.error("Error fetching orders:", error.message);
+    }
+  };
+
+  const getCustomers = async () => {
+    try {
+      const token = sessionStorage.getItem("token");
+      const customerIds = orders.map((order) => order.customerId);
+      const ids = customerIds.join(",");
+      const response = await axios.get("http://localhost:4000/public/users", {
+        headers: { Authorization: `Bearer ${token}` },
+        params: { ids: ids },
+      });
+
+      if (response.status === 200) {
+        console.log(response);
+        setCustomersData(response.data.data);
+      } else {
+        console.error("Failed to fetch orders. Status:", response.status);
+      }
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    }
+  };
+
+  const getAddresses = async () => {
+    try {
+      const token = sessionStorage.getItem("token");
+      const addressIds = orders.map((order) => order.addressId);
+      const ids = addressIds.join(",");
+      const response = await axios.get(
+        "http://localhost:4000/public/addressess",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { ids: ids },
+        }
+      );
+
+      if (response.status === 200) {
+        setAddressData(response.data.data);
+      } else {
+        console.error("Failed to fetch orders. Status:", response.status);
+      }
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    }
+  };
+  // 3. Effect to Fetch Orders on Component Mount
+
+  console.log("set", customersData);
+  console.log(addressData);
+
   useEffect(() => {
+    getAllOrders();
+  }, []); // Fetch orders on mount
+
+  useEffect(() => {
+    if (orders.length > 0) {
+      getCustomers();
+      getAddresses();
+    }
+  }, [orders]); // Fetch customers & addresses only when orders are updated
+
+  // 4. Effect to Filter Orders When `orders` or `filter` Changes
+  useEffect(() => {
+    console.log("orders changes");
     setFilteredOrders(
       filter === "All"
         ? orders
-        : orders.filter((order) => order.status === filter)
+        : orders.filter(
+            (order) =>
+              order.orderDetails[0].orderStatus === filter.toUpperCase()
+          )
     );
   }, [orders, filter]);
 
-  const handleActionClick = (action, orderId) => {
-    setOrders((prevOrders) => {
-      const updatedOrders = prevOrders.map((order) =>
-        order.orderId === orderId ? { ...order, status: action } : order
+  // 5. Action Handler for Updating Order Status
+  const handleActionClick = async (action, orderId) => {
+    // http://localhost:8081/orders/admin/orderStatus?orderStatus=PENDING
+    try {
+      const token = sessionStorage.getItem("token");
+      const response = await axios.patch(
+        `http://192.168.0.104:8081/orders/admin/orderStatus/${orderId}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          params: {
+            orderStatus: action.toUpperCase(),
+          },
+        }
       );
-      return updatedOrders;
-    });
 
-    // Ensure filtered orders also get updated
-    setFilteredOrders((prevFilteredOrders) => {
-      return prevFilteredOrders.map((order) =>
-        order.orderId === orderId ? { ...order, status: action } : order
-      );
-    });
+      console.log("Headers being sent:", {
+        Authorization: `Bearer ${token}`,
+      });
+
+      if (response.status === 200) {
+        toast.success(`Order ${action} successfully`);
+        getAllOrders();
+        window.location.reload();
+      } else {
+        toast.error(`Order Not ${action}`);
+      }
+    } catch (error) {
+      toast.error("Internal Server Error");
+      console.error("Error fetching orders:", error.message);
+    }
   };
 
   return (
@@ -213,6 +189,8 @@ const OrderPage = () => {
           <div className="">
             <OrderTable
               orders={filteredOrders}
+              customers={customersData}
+              addresses={addressData}
               handleActionClick={handleActionClick}
             />
           </div>

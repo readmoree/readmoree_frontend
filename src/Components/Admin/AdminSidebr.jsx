@@ -28,9 +28,9 @@ export default function Sidebar() {
           { name: "Stock", path: "/stock" },
           { name: "Offers", path: "/offers" },
         ].map((item) => (
-          <a
+          <Link
             key={item.path}
-            href={item.path}
+            to={item.path}
             className={`p-3 rounded-lg transition ${
               location.pathname === item.path
                 ? "bg-white text-black"
@@ -38,7 +38,7 @@ export default function Sidebar() {
             }`}
           >
             {item.name}
-          </a>
+          </Link>
         ))}
       </nav>
 

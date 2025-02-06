@@ -90,6 +90,17 @@ const CartScreen = () => {
   // };
   const placeOrder = async () => {
     try {
+      const token = sessionStorage.getItem("token");
+      if (!token) {
+        console.error("Token not found. Please log in.");
+        return;
+      }
+      const orderDetailsforInvoice = books.map((book, index) => ({
+        name: book.title,
+        quantity: bookQuantities[index],
+        price: book.price,
+        discount: book.discount,
+      }));
       console.log("Calling Place Order Method");
       const orderDetails = books.map((book, index) => ({
         bookId: book.id,
@@ -98,9 +109,12 @@ const CartScreen = () => {
       }));
       console.log(orderDetails);
       const orderResponse = await axios.post(
-        "http://192.168.0.106:8081/orders/placeOrder/45",
+        "http://192.168.0.104:8081/orders/placeOrder",
         orderDetails,
         {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
           params: {
             addressId: selectedAddress.addressId,
             paymentMethod: "COD",
@@ -108,9 +122,29 @@ const CartScreen = () => {
         }
       );
       if (orderResponse.status === 200) {
+        console.log(orderResponse);
         await makeCartEmpty();
-        toast.success(orderResponse.data.message);
-        navigate("/order-confirmation");
+
+        const invoiceDetails = {
+          items: orderDetailsforInvoice,
+          orderId: orderResponse.data.orderId,
+          billingAddress: selectedAddress,
+          shippingAddress: selectedAddress,
+        };
+
+        const invoiceRes = await axios.post(
+          "http://localhost:4000/api/send-invoice",
+          invoiceDetails,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (invoiceRes.status == 200) {
+          toast.success(orderResponse.data.message);
+          navigate("/order-confirmation");
+        }
       }
     } catch (error) {
       console.error("Error placing order:", error);
