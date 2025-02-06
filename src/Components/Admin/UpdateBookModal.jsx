@@ -1,21 +1,49 @@
+import axios from "axios";
 import React, { useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 
-const UpdateBookModal = ({ book, onClose, onUpdate }) => {
+const updateBook = async (bookId, formData) => {
+  try {
+    const response = await axios.put(
+      `${process.env.REACT_APP_BOOK_SERVICE_URL}/book/admin/update/${bookId}`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.token}`,
+        },
+      }
+    );
+    return response.status;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+const UpdateBookModal = ({ book, onClose }) => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: book.title,
     price: book.price,
     discount: book.discount || 0,
-    stock: book.totalAvailableCount,
+    totalAvailableCount: book.totalAvailableCount,
   });
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onUpdate(formData);
+    const statusCode = await updateBook(book.id, formData);
+    if (statusCode === 200) {
+      console.log("updated");
+    } else {
+      console.log("failed to update");
+    }
+
     onClose();
+    window.location.reload();
   };
 
   return (
@@ -73,25 +101,26 @@ const UpdateBookModal = ({ book, onClose, onUpdate }) => {
             <input
               type="number"
               name="stock"
-              value={formData.stock}
+              value={formData.totalAvailableCount}
               onChange={handleChange}
-              className="w-full p-2 border border-lilac_dark rounded-md"
+              className="w-full p-2 mb-4 border border-lilac_dark rounded-md"
               required
             />
           </div>
 
           {/* Buttons */}
-          <div className="flex w-full mt-4">
+          <div className="flex w-full mt-10 gap-3">
             <button
               type="submit"
               className="px-4 py-2 bg-lilac_dark text-white rounded-lg w-1/2"
+              onClick={handleSubmit}
             >
               Update
             </button>
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 bg-gray-300 rounded-lg w-1/2"
+              className="px-4 py-2 bg-black text-white rounded-lg w-1/2"
             >
               Cancel
             </button>

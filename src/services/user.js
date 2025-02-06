@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const USER_SERVICE_URL = "http://localhost:4000/user";
+const USER_SERVICE_URL = `${process.env.REACT_APP_USER_SERVICE_URL}/user`;
 
 export async function loadUserData() {
   try {
@@ -20,7 +20,7 @@ export async function loadUserData() {
 export async function getUsersByIds(ids) {
   try {
     const response = await axios.get(
-      `http://localhost:4000/public/users?ids=${ids}`,
+      `${process.env.REACT_APP_USER_SERVICE_URL}/public/users?ids=${ids}`,
       {
         headers: {
           authorization: `BEARER ${sessionStorage["token"]}`,

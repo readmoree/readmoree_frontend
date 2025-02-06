@@ -10,6 +10,7 @@ import Fiction from "./NavLinks/Fiction";
 import YoungAdults from "./NavLinks/YoungAdults";
 import Languages from "./NavLinks/Languages";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -32,13 +33,33 @@ const Navbar = () => {
   const [isCategoriesDivOpen, setIsCategoriesDivOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
+  const userDetails = async () => {
+    try {
+      const token = sessionStorage.getItem("token");
+      const response = await axios.get(
+        `${process.env.REACT_APP_USER_SERVICE_URL}/user`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.status == 200) {
+        setIsAuthenticated(true);
+        setUser({
+          name:
+            `${response.data.data.firstName} ` +
+            `${response.data.data.lastName}`,
+          email: `${response.data.data.email}`,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   // Check if user is logged in (from localStorage, API, etc.)
   useEffect(() => {
-    const token = sessionStorage.getItem("token");
-    if (token) {
-      setIsAuthenticated(true);
-      setUser({ name: "Vishal", email: "borsev662@gmail.com" }); // Replace with real user data
-    }
+    userDetails();
   }, []);
 
   // Logout function

@@ -26,8 +26,9 @@ const Login = () => {
     }
 
     try {
+      console.log(process.env.REACT_APP_USER_SERVICE_URL);
       const response = await axios.post(
-        "http://localhost:4000/auth/login",
+        `${process.env.REACT_APP_USER_SERVICE_URL}/auth/login`,
         { email, password },
         { withCredentials: true }
       );

@@ -23,7 +23,7 @@ const BookItem = ({
       }
 
       const response = await axios.delete(
-        `http://localhost:4000/api/cart/${details.id}`,
+        `${process.env_REACT_APP_CART_SERVICE_API}/cart/${details.id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -56,7 +56,7 @@ const BookItem = ({
       }
 
       const response = await axios.post(
-        `http://localhost:4000/api/transfer-to-wishlist/${details.id}`,
+        `${process.env.REACT_APP_CART_SERVICE}/transfer-to-wishlist/${details.id}`,
         {},
         {
           headers: {
@@ -92,7 +92,7 @@ const BookItem = ({
       }
 
       const response = await axios.put(
-        `http://localhost:4000/api/cart/${details.id}`,
+        `${process.env.REACT_APP_CART_SERVICE}/cart/${details.id}`,
         { quantity: newQty },
         {
           headers: {
@@ -104,6 +104,7 @@ const BookItem = ({
       if (response.status === 200) {
         setSelectedQty(newQty);
         updateBookQuantity(details.id, newQty);
+        window.location.reload();
       }
     } catch (error) {
       console.error(

@@ -10,11 +10,14 @@ const AdminHeader = () => {
   const getAdminDetails = async () => {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await axios.get("http://localhost:4000/admin/details", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        `${process.env.REACT_APP_USER_SERVICE_URL}/admin/details`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       if (response.status == 200) {
         console.log(response);
         setAdminName(

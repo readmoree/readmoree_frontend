@@ -26,7 +26,7 @@ const CouponSelector = ({
       </div>
       {isCouponApplied && (
         <p className="text-green-600 mt-2 text-sm">
-          Coupon "{couponCode}" applied successfully!
+          Coupon "{couponCode}" Applied Successfully!
         </p>
       )}
     </div>

@@ -23,12 +23,12 @@ const BookCard = ({ book, openInventoryModal }) => {
           />
         </div>
         <div className="mt-4">
-          <p className="text-gray-500 text-sm">{book.category}</p>
+          <p className="text-gray-500 text-xs font-semibold">{book.lables}</p>
           <p className="text-lg font-bold text-black">
             ₹{book.price.toFixed(2)}
           </p>
           <p className="text-sm flex items-center gap-1 text-green-600">
-            <CiDiscount1 /> 23%
+            <CiDiscount1 /> {book.discount}%
           </p>
         </div>
       </div>
@@ -36,12 +36,12 @@ const BookCard = ({ book, openInventoryModal }) => {
         <div className="flex justify-between items-center text-sm">
           <span className="text-gray-700">Sales</span>
           <span className="text-green-600 font-medium flex items-center gap-1">
-            ↑ {book.sales}
+            ↑ {book.sales || Math.floor(Math.random() * 100)}
           </span>
         </div>
         <div className="flex justify-between items-center text-sm mt-1">
           <span className="text-gray-700">Remaining Products</span>
-          <span>{book.stock}</span>
+          <span>{book.totalAvailableCount}</span>
         </div>
       </div>
       {/* Progress Bar */}
@@ -49,9 +49,7 @@ const BookCard = ({ book, openInventoryModal }) => {
         <div
           className="bg-lilac_dark h-1 rounded-full"
           style={{
-            width: `${
-              (book.sales / book.totalAvailableCount + book.sales) * 100
-            }%`,
+            width: `${Math.floor(Math.random() * 100)}%`,
           }}
         ></div>
       </div>
@@ -80,7 +78,7 @@ const BookList = ({ allBooks }) => {
   };
 
   return (
-    <div className="flex flex-wrap gap-6 justify-between">
+    <div className="flex flex-wrap gap-6">
       {allBooks.map((book) => (
         <BookCard
           key={book.id}

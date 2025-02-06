@@ -109,7 +109,7 @@ const CartScreen = () => {
       }));
       console.log(orderDetails);
       const orderResponse = await axios.post(
-        "http://192.168.0.104:8081/orders/placeOrder",
+        `${process.env.REACT_APP_ORDER_SERVICE_URL}/orders/placeOrder`,
         orderDetails,
         {
           headers: {
@@ -166,11 +166,14 @@ const CartScreen = () => {
         price: book.price,
       }));
       console.log(orderDetails);
-      const response = await axios.delete("http://localhost:4000/api/cart", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.delete(
+        `${process.env.REACT_APP_CART_SERVICE_URL}/cart`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
     } catch (error) {
       console.error("Error placing order:", error);
       toast.error("Something went wrong. Please try again.");
@@ -186,9 +189,13 @@ const CartScreen = () => {
         return;
       }
 
-      const response = await axios.get("http://localhost:4000/api/cart", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      console.log(process.env.REACT_APP_CART_SERVICE_URL);
+      const response = await axios.get(
+        `${process.env.REACT_APP_CART_SERVICE_URL}/cart`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       if (response.data.data.books) setBooks(response.data.data.books);
       if (response.data.data.quantitiesOfBooks)
@@ -211,9 +218,12 @@ const CartScreen = () => {
         return;
       }
 
-      const response = await axios.get("http://localhost:4000/user/address", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.get(
+        `${process.env.REACT_APP_USER_SERVICE_URL}/user/address`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       if (response.data.data.length > 0) {
         setAddresses(response.data.data);

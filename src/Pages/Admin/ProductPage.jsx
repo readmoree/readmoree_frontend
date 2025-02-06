@@ -8,35 +8,18 @@ import { FiSearch } from "react-icons/fi";
 import BookList from "../../Components/Admin/BookList";
 import axios from "axios";
 const categories = [
+  "Academics",
   "Fiction",
-  "Non-Fiction",
-  "Science",
-  "History",
-  "Biography",
-];
-
-const initialBooks = [
-  {
-    id: 1,
-    title: "The Alchemist",
-    author: "Paulo Coelho",
-    publisher: "HarperCollins",
-    image: "https://m.media-amazon.com/images/I/71aFt4+OTOL._SL1500_.jpg",
-    price: "₹499",
-    publicationDate: "1988",
-    pageCount: 208,
-    isbn: "978-0062315007",
-    language: "English",
-    binding: "Paperback",
-    description: "A journey of self-discovery and following your dreams.",
-    category: "Fiction",
-    stock: 10,
-  },
+  "Non Fiction",
+  "Children",
+  "Young Adults",
+  "Comics & Graphics Novels",
 ];
 
 export default function ProductsPage() {
   // const [books, setBooks] = useState(initialBooks);
   const [booksData, setBooksData] = useState([]);
+  const [filteredBooks, setFilteredBooks] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("Fiction");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isInventoryModalOpen, setIsInventoryModalOpen] = useState(false);
@@ -62,7 +45,7 @@ export default function ProductsPage() {
   const getAllBooks = async () => {
     try {
       const response = await axios.get(
-        "http://192.168.0.104:8080/book/public/all"
+        `${process.env.REACT_APP_BOOK_SERVICE_URL}/book/public/all`
       );
       if (response.status == 200) {
         setBooksData(response.data);
@@ -76,6 +59,24 @@ export default function ProductsPage() {
     getAllBooks();
   }, []);
 
+  const filterBooks = () => {
+    const formattedCategory = selectedCategory
+      .replace(/\s+/g, "")
+      .toUpperCase(); // Remove spaces and convert to uppercase
+    setFilteredBooks(
+      booksData.filter(
+        (book) =>
+          book.lables.replace(/\s+/g, "").toUpperCase() === formattedCategory
+      )
+    );
+  };
+  useEffect(() => {
+    filterBooks();
+  }, [booksData, selectedCategory]);
+
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+  };
   const handleChange = (e) => {
     // setNewBook({ ...newBook, [e.target.name]: e.target.value });
   };
@@ -146,15 +147,15 @@ export default function ProductsPage() {
 
               {/* Category Filter Dropdown */}
               <DropdownMenu.Root className="">
-                <DropdownMenu.Trigger className="flex items-center gap-2 px-6 py-2 bg-white border border-lilac_dark rounded-lg cursor-pointer font-bold">
+                <DropdownMenu.Trigger className="flex items-center gap-2 px-14 py-2 bg-white border border-lilac_dark rounded-lg cursor-pointer font-bold">
                   {selectedCategory} Books
                   <ChevronDown className="w-4 h-4" />
                 </DropdownMenu.Trigger>
-                <DropdownMenu.Content className="bg-white shadow-md rounded-lg p-2 px-6">
+                <DropdownMenu.Content className="bg-white shadow-md rounded-lg p-2 px-2">
                   {categories.map((category) => (
                     <DropdownMenu.Item
                       key={category}
-                      onClick={() => setSelectedCategory(category)}
+                      onClick={() => handleCategoryChange(category)}
                       className="cursor-pointer p-2 px-6 hover:bg-gray-200"
                     >
                       {category}
@@ -389,7 +390,7 @@ export default function ProductsPage() {
               </div>
             ))}
           </div> */}
-          <BookList allBooks={booksData} />
+          <BookList allBooks={filteredBooks} />
         </div>
       </div>
 

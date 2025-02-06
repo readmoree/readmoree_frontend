@@ -23,7 +23,7 @@ const OrderPage = () => {
     try {
       const token = sessionStorage.getItem("token");
       const response = await axios.get(
-        "http://192.168.0.104:8081/orders/admin/allOrders",
+        `${process.env.REACT_APP_ORDER_SERVICE_URL}/orders/admin/allOrders`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -52,10 +52,13 @@ const OrderPage = () => {
       const token = sessionStorage.getItem("token");
       const customerIds = orders.map((order) => order.customerId);
       const ids = customerIds.join(",");
-      const response = await axios.get("http://localhost:4000/public/users", {
-        headers: { Authorization: `Bearer ${token}` },
-        params: { ids: ids },
-      });
+      const response = await axios.get(
+        `${process.env.REACT_APP_USER_SERVICE_URL}/public/users`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { ids: ids },
+        }
+      );
 
       if (response.status === 200) {
         console.log(response);
@@ -74,7 +77,7 @@ const OrderPage = () => {
       const addressIds = orders.map((order) => order.addressId);
       const ids = addressIds.join(",");
       const response = await axios.get(
-        "http://localhost:4000/public/addressess",
+        `${process.env.REACT_APP_USER_SERVICE_URL}/public/addressess`,
         {
           headers: { Authorization: `Bearer ${token}` },
           params: { ids: ids },
@@ -125,7 +128,7 @@ const OrderPage = () => {
     try {
       const token = sessionStorage.getItem("token");
       const response = await axios.patch(
-        `http://192.168.0.104:8081/orders/admin/orderStatus/${orderId}`,
+        `${process.env.REACT_APP_ORDER_SERVICE_URL}/orders/admin/orderStatus/${orderId}`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },

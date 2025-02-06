@@ -110,7 +110,7 @@ const StatisticsPage = ({
     try {
       const token = sessionStorage.getItem("token");
       const response = await axios.get(
-        "http://192.168.0.104:8081/orders/admin/allOrders",
+        `${process.env.REACT_APP_ORDER_SERVICE_URL}/orders/admin/allOrders`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -139,10 +139,13 @@ const StatisticsPage = ({
       const token = sessionStorage.getItem("token");
       const customerIds = orders.map((order) => order.customerId);
       const ids = customerIds.join(",");
-      const response = await axios.get("http://localhost:4000/public/users", {
-        headers: { Authorization: `Bearer ${token}` },
-        params: { ids: ids },
-      });
+      const response = await axios.get(
+        `${process.env.REACT_APP_USER_SERVICE_URL}/public/users`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { ids: ids },
+        }
+      );
 
       if (response.status === 200) {
         console.log(response);

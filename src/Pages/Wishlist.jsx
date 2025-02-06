@@ -99,11 +99,11 @@ const Wishlist = () => {
       <Navbar />
       <div className="container mx-auto p-6 text-center">
         <h2 className="text-3xl font-bold mb-6">My Wishlist</h2>
-        <div className="flex flex-wrap items-start mx-32">
+        <div className="flex flex-wrap items-start mx-32 justify-center">
           {wishlistBooks.map((book) => (
             <div
               key={book.id}
-              className="border p-4 m-4 rounded-lg text-center w-52 flex items-center flex-col"
+              className="border m-4 p-6 rounded-lg text-center flex items-center flex-col"
             >
               <img
                 src={
@@ -111,32 +111,32 @@ const Wishlist = () => {
                   "https://www.crossword.in/cdn/shop/files/71OUTeaNQBL._SL1500_1080x@2x.jpg?v=1724907752"
                 }
                 alt={book.title}
-                className="h-48 w-fit object-cover mb-2"
+                className="h-48 w-fit mb-2"
               />
-              <h3 className="text-sm font-semibold">{book.title}</h3>
-              <p className="text-xs text-gray-500">
+              <h3 className="text-md font-semibold">{book.title}</h3>
+              <p className="text-sm text-lilac_dark">
                 {book.author.firstName} {book.author.lastName}
               </p>
               <p className="text-sm mt-1">
-                <span className="font-bold">{book.price}</span> &nbsp;
+                <span className="font-bold"> ₹ {book.price}</span> &nbsp;
                 <span className="line-through text-gray-400">
-                  {(book.price / (1 - book.discount / 100)).toFixed(2)}
+                  ₹ {(book.price / (1 - book.discount / 100)).toFixed(2)}
                 </span>{" "}
                 &nbsp;
-                <span className="text-green-600">{`(${book.discount})`}</span>
+                <span className="text-green-600">{`(${book.discount})`}%</span>
               </p>
-              <div className="flex flex-row">
+              <div className="flex flex-row mt-3 items-center">
                 <button
-                  className="bg-gray-200 text-sm px-4 py-1 mt-2 rounded-md"
+                  className="border border-black text-sm px-4 py-1 mt-2 rounded-md hover:bg-black hover:text-white"
                   onClick={() => addBookToCart(book.id)}
                 >
-                  ADD TO BAG
+                  Add To Bag
                 </button>
                 <button
                   onClick={() => deleteBook(book.id)}
-                  className="ml-2 text-red-500"
+                  className="ml-2 mt-1 text-black hover:text-red-500"
                 >
-                  <Trash2 size={16} />
+                  <Trash2 size={18} />
                 </button>
               </div>
             </div>

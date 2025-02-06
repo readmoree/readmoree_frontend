@@ -19,13 +19,11 @@ import OrderDashboard from "./Pages/Admin/OrdersPage";
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
 import ProductsPage from "./Pages/Admin/ProductPage";
 import { registerLicense } from "@syncfusion/ej2-base";
-<<<<<<< Updated upstream
-import Search from "./Screens/Search";
 
-=======
+import Search from "./Screens/Search";
 import Unauthorized from "./Pages/Unauthorized";
 import NotFound from "./Pages/NotFound";
->>>>>>> Stashed changes
+
 let key =
   "Ngo9BigBOggjHTQxAR8/V1NMaF1cXmhLYVJ3WmFZfVtgdV9HZFZSQWYuP1ZhSXxWdkdjXX9fcXBWQ2JbWUM=";
 registerLicense(key);

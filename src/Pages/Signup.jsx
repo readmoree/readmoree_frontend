@@ -61,7 +61,7 @@ const Signup = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:4000/auth/register",
+        `${process.env.REACT_APP_USER_SERVICE_URL}/auth/register`,
         userData,
         { withCredentials: true }
       );

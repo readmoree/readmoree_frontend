@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BOOK_SERVICE_URL = "http://192.168.0.104:8080";
+const BOOK_SERVICE_URL = process.env.REACT_APP_BOOK_SERVICE_URL;
 
 export async function getAllBooks() {
   try {
