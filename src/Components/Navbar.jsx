@@ -36,6 +36,7 @@ const Navbar = () => {
   const userDetails = async () => {
     try {
       const token = sessionStorage.getItem("token");
+      if (!token) return;
       const response = await axios.get(
         `${process.env.REACT_APP_USER_SERVICE_URL}/user`,
         {
@@ -111,182 +112,184 @@ const Navbar = () => {
   };
 
   return (
-    <div className="font-sans">
-      {/* Navigation Bar */}
-      <div className="bg-lilac_dark flex items-center justify-between px-6 py-3">
-        {/* Logo */}
-        <div
-          className="flex items-center py-4 ml-2"
-          onClick={() => navigate("/")}
-        >
-          <ImBooks className="text-black text-5xl" />
-          <span className="ml-1 font-bold text-2xl">READMOREE</span>
-        </div>
-
-        {/* Search Bar */}
-        <div className="flex items-center bg-white rounded-md w-1/2">
-          <input
-            type="text"
-            placeholder="Search by Title, Author, ISBN"
-            className="w-full px-4 py-2 rounded-l-md focus:outline-none"
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <button
-            className="bg-black text-white px-4 py-3 rounded-r-md"
-            onClick={handleSearch}
+    <>
+      <div className="font-sans">
+        {/* Navigation Bar */}
+        <div className="bg-lilac_dark flex items-center justify-between px-6 py-3">
+          {/* Logo */}
+          <div
+            className="flex items-center py-4 ml-2"
+            onClick={() => navigate("/")}
           >
-            <FiSearch />
-          </button>
-        </div>
+            <ImBooks className="text-black text-5xl" />
+            <span className="ml-1 font-bold text-2xl">READMOREE</span>
+          </div>
 
-        {/* Right Icons */}
-        <div className="flex justify-between items-center">
-          {/* Conditionally render Login or My Account */}
-          {isAuthenticated ? (
-            <div className="relative font-semibold bg-white rounded-md mr-3">
-              <button
-                className="flex items-center gap-2 px-3 py-2 rounded"
-                onMouseEnter={() => setIsDropdownOpen(true)}
-                // onMouseLeave={() => setIsDropdownOpen(false)}
-              >
-                <IoPersonOutline className="text-2xl font-semibold" />
-                <span>My Account</span>
-              </button>
-
-              {/* Profile Dropdown */}
-              {isDropdownOpen && (
-                <div
-                  className="absolute mt-2 w-64 bg-white shadow-lg rounded-md p-4"
-                  onMouseEnter={() => setIsDropdownOpen(true)}
-                  onMouseLeave={() => setIsDropdownOpen(false)}
-                >
-                  {/* User Name */}
-                  <div className="flex items-center gap-3 border-b pb-3">
-                    <div className="bg-gray-200 rounded-full p-2">
-                      <IoPersonOutline className="text-3xl" />
-                    </div>
-                    <div>
-                      <p className="font-semibold">{user.name}</p>
-                      <p className="text-sm text-gray-500">{user.email}</p>
-                    </div>
-                  </div>
-
-                  {/* Profile Links */}
-                  <div className="mt-3 space-y-2">
-                    <button
-                      className="block w-full text-left px-4 py-2 hover:bg-gray-100 rounded"
-                      onClick={() => navigate("/profile")}
-                    >
-                      View Profile
-                    </button>
-                    <button
-                      className="block w-full text-left px-4 py-2 hover:bg-gray-100 rounded"
-                      onClick={() => navigate("/orders")}
-                    >
-                      My Orders
-                    </button>
-
-                    {/* Account Details */}
-                    <div className="border-t pt-3 text-gray-600">
-                      <button
-                        className="block w-full text-left px-4 py-2 hover:bg-gray-100 rounded"
-                        onClick={() => navigate("/reviews")}
-                      >
-                        My Reviews
-                      </button>
-                      <button
-                        className="block w-full text-left px-4 py-2 hover:bg-gray-100 rounded"
-                        onClick={() => navigate("/addresses")}
-                      >
-                        Saved Addresses
-                      </button>
-                      <button
-                        className="block w-full text-left px-4 py-2 hover:bg-gray-100 rounded"
-                        onClick={() => navigate("/reading-profile")}
-                      >
-                        Reading Profile
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Logout Button */}
-                  <button
-                    className="block w-full text-left px-4 py-2 mt-3 text-red-500 hover:bg-gray-100 rounded"
-                    onClick={handleLogout}
-                  >
-                    Sign Out
-                  </button>
-                </div>
-              )}
-            </div>
-          ) : (
+          {/* Search Bar */}
+          <div className="flex items-center bg-white rounded-md w-1/2">
+            <input
+              type="text"
+              placeholder="Search by Title, Author, ISBN"
+              className="w-full px-4 py-2 rounded-l-md focus:outline-none"
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
             <button
-              className="bg-black text-white px-5 py-2 mr-3 rounded-md flex items-center gap-2 hover:bg-black hover:text-white"
-              onClick={() => navigate("/login")}
+              className="bg-black text-white px-4 py-3 rounded-r-md"
+              onClick={handleSearch}
             >
-              Login
-            </button>
-          )}
-          {/* <a className="text-gray-500">|</a> */}
-
-          {/* Shopping Bag Icon */}
-          <div
-            className="relative border border-black rounded-md"
-            onClick={handleWishlistClick}
-          >
-            <button className="flex items-center gap-2 px-3 py-2 rounded">
-              <FaRegHeart className="text-xl" />
-              <span className="font-semibold">Bookshelf</span>
+              <FiSearch />
             </button>
           </div>
-          {/* <a className="text-gray-500">|</a> */}
-          {/* Heart Icon */}
+
+          {/* Right Icons */}
+          <div className="flex justify-between items-center">
+            {/* Conditionally render Login or My Account */}
+            {isAuthenticated ? (
+              <div className="relative font-semibold bg-white rounded-md mr-3">
+                <button
+                  className="flex items-center gap-2 px-3 py-2 rounded"
+                  onMouseEnter={() => setIsDropdownOpen(true)}
+                  // onMouseLeave={() => setIsDropdownOpen(false)}
+                >
+                  <IoPersonOutline className="text-2xl font-semibold" />
+                  <span>My Account</span>
+                </button>
+
+                {/* Profile Dropdown */}
+                {isDropdownOpen && (
+                  <div
+                    className="absolute mt-2 w-64 bg-white shadow-lg rounded-md p-4"
+                    onMouseEnter={() => setIsDropdownOpen(true)}
+                    onMouseLeave={() => setIsDropdownOpen(false)}
+                  >
+                    {/* User Name */}
+                    <div className="flex items-center gap-3 border-b pb-3">
+                      <div className="bg-gray-200 rounded-full p-2">
+                        <IoPersonOutline className="text-3xl" />
+                      </div>
+                      <div>
+                        <p className="font-semibold">{user.name}</p>
+                        <p className="text-sm text-gray-500">{user.email}</p>
+                      </div>
+                    </div>
+
+                    {/* Profile Links */}
+                    <div className="mt-3 space-y-2">
+                      <button
+                        className="block w-full text-left px-4 py-2 hover:bg-gray-100 rounded"
+                        onClick={() => navigate("/profile")}
+                      >
+                        View Profile
+                      </button>
+                      <button
+                        className="block w-full text-left px-4 py-2 hover:bg-gray-100 rounded"
+                        onClick={() => navigate("/orders")}
+                      >
+                        My Orders
+                      </button>
+
+                      {/* Account Details */}
+                      <div className="border-t pt-3 text-gray-600">
+                        <button
+                          className="block w-full text-left px-4 py-2 hover:bg-gray-100 rounded"
+                          onClick={() => navigate("/reviews")}
+                        >
+                          My Reviews
+                        </button>
+                        <button
+                          className="block w-full text-left px-4 py-2 hover:bg-gray-100 rounded"
+                          onClick={() => navigate("/addresses")}
+                        >
+                          Saved Addresses
+                        </button>
+                        <button
+                          className="block w-full text-left px-4 py-2 hover:bg-gray-100 rounded"
+                          onClick={() => navigate("/reading-profile")}
+                        >
+                          Reading Profile
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Logout Button */}
+                    <button
+                      className="block w-full text-left px-4 py-2 mt-3 text-red-500 hover:bg-gray-100 rounded"
+                      onClick={handleLogout}
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <button
+                className="bg-black text-white px-5 py-2 mr-3 rounded-md flex items-center gap-2 hover:bg-black hover:text-white"
+                onClick={() => navigate("/login")}
+              >
+                Login
+              </button>
+            )}
+            {/* <a className="text-gray-500">|</a> */}
+
+            {/* Shopping Bag Icon */}
+            <div
+              className="relative border border-black rounded-md"
+              onClick={handleWishlistClick}
+            >
+              <button className="flex items-center gap-2 px-3 py-2 rounded">
+                <FaRegHeart className="text-xl" />
+                <span className="font-semibold">Bookshelf</span>
+              </button>
+            </div>
+            {/* <a className="text-gray-500">|</a> */}
+            {/* Heart Icon */}
+            <div
+              className="relative font-semibold border border-black rounded-md ml-3 "
+              onClick={handleCartClick}
+            >
+              <button className="flex items-center gap-2 px-3 py-2 rounded">
+                <HiOutlineShoppingBag className="text-2xl font-semibold" />
+                <span>Cart</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="text-sm font-semibold py-3 mt-1 flex flex-row items-center justify-center gap-16 w-full">
+          {/* Navigation Links */}
+
+          {categories.map((item, index) => (
+            <div key={index} onMouseEnter={() => setHoveredCategory(item.name)}>
+              <span
+                className="hover:text-lilac_dark cursor-pointer"
+                onClick={() => {
+                  setHoveredCategory(null);
+                  navigate(
+                    `/search/${item.name
+                      .toLowerCase()
+                      .replace(/\s+/g, "-")
+                      .toLowerCase()}`
+                  );
+                }}
+              >
+                {item.name}
+              </span>
+            </div>
+          ))}
+        </div>
+        <hr />
+
+        {/* component of categories*/}
+        <div className="flex items-center justify-center">
           <div
-            className="relative font-semibold border border-black rounded-md ml-3 "
-            onClick={handleCartClick}
+            className="absolute top-40 bg-white shadow-lg border border-black z-50"
+            onMouseLeave={() => setHoveredCategory(null)}
           >
-            <button className="flex items-center gap-2 px-3 py-2 rounded">
-              <HiOutlineShoppingBag className="text-2xl font-semibold" />
-              <span>Cart</span>
-            </button>
+            {renderHoveredComponent()}
           </div>
         </div>
       </div>
-
-      <div className="text-sm font-semibold py-3 mt-1 flex flex-row items-center justify-center gap-16 w-full">
-        {/* Navigation Links */}
-
-        {categories.map((item, index) => (
-          <div key={index} onMouseEnter={() => setHoveredCategory(item.name)}>
-            <span
-              className="hover:text-lilac_dark cursor-pointer"
-              onClick={() => {
-                setHoveredCategory(null);
-                navigate(
-                  `/search/${item.name
-                    .toLowerCase()
-                    .replace(/\s+/g, "-")
-                    .toLowerCase()}`
-                );
-              }}
-            >
-              {item.name}
-            </span>
-          </div>
-        ))}
-      </div>
-      <hr />
-
-      {/* component of categories*/}
-      <div className="flex items-center justify-center">
-        <div
-          className="absolute top-40 bg-white shadow-lg border border-black z-50"
-          onMouseLeave={() => setHoveredCategory(null)}
-        >
-          {renderHoveredComponent()}
-        </div>
-      </div>
-    </div>
+    </>
   );
 };
 

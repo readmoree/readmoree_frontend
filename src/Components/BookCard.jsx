@@ -1,45 +1,61 @@
 import React from "react";
 import { FaHeart } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { CiHeart } from "react-icons/ci";
+import { Link, useParams } from "react-router-dom";
 
 const BookCard = ({ book }) => {
   const navigate = useNavigate();
   const handleClick = (bookName) => {
-    navigate(
-      `/book-details/${bookName
-        .toLowerCase()
-        .replace(/\s+/g, "-")
-        .toLowerCase()}`
-    );
+    // navigate(
+    //   `/book-details/${bookName
+    //     .toLowerCase()
+    //     .replace(/\s+/g, "-")
+    //     .toLowerCase()}`
+    // );
   };
   return (
-    <div className="" onClick={handleClick(book.bookName)}>
-      <div className="flex flex-col items-center w flex-shrink-0 mr-5">
-        <div className="border-4 border-white p-2">
+    <div className="p-3" onClick={handleClick(book.title)}>
+      <div className="p-4 pb-5 mb-5 border border-gray-300 rounded-md">
+        <div className="mb-4 text-center flex items-center justify-center">
           <img
-            src={book.imageURL}
-            alt={`Book cover of ${book.bookName}`}
-            className="w-48 h-72 object-cover mb-4"
+            src={
+              book.imgUrl ||
+              "https://www.crossword.in/cdn/shop/files/81jKG6s76HL._SL1500_1080x@2x.jpg?v=1734676485"
+            }
+            alt={book.title}
+            className="w-fit h-64"
           />
         </div>
-        <h3 className="text-center text-lg font-semibold">{book.bookName}</h3>
-        <p className="text-center text-purple-600">{book.author}</p>
-        <p className="text-center">
-          <span className="text-lg font-semibold">{book.price}</span>
-          <span className="line-through text-gray-500 ml-2">
-            {book.originalPrice}
-          </span>
-          <span className="text-green-600 ml-2">({book.discount})</span>
+        <Link to={`/book-details/${book.id}`}>
+          <h1 className="font-mont text-md text-center m-0">
+            {book.title.length > 20
+              ? `${book.title.substring(0, 20)}...`
+              : book.title}
+          </h1>
+        </Link>
+        <p className="text-lilac_dark text-sm text-center m-0">
+          {book.author.firstName} {book.author.lastName}
         </p>
-        <div className="flex items-center mt-2">
-          <button className="px-4 py-2 border border-gray-400 rounded hover:bg-slate-500 hover:text-black">
-            ADD TO BAG
-          </button>
-          <button className="text-2xl text-gray-500 hover:text-red-500 ml-2">
-            <i className="far fa-heart">
-              <FaHeart />
-            </i>
-          </button>
+        <div className="flex items-center mb-4 justify-center mt-2 font-mont">
+          <h2 className="text-md font-normal mr-2">
+            ₹{(book.price - (book.discount / 100) * book.price).toFixed(2)}
+          </h2>
+          <p className="text-xs text-gray-400 font-normal mt-[1px] mr-1 line-through">
+            ₹{book.price}
+          </p>
+          <p className="text-xs mt-[1px] text-green-600">
+            ({book.discount}% OFF)
+          </p>
+        </div>
+        <div className="flex items-center justify-center gap-6">
+          {" "}
+          <div className="bg-black text-white border border-black px-4 py-1 rounded-md hover:bg-white hover:text-black">
+            <button className="text-sm">Add to Bag</button>{" "}
+          </div>{" "}
+          <div className="">
+            <CiHeart className="w-6 h-8 hover:text-red-500" />{" "}
+          </div>{" "}
         </div>
       </div>
     </div>

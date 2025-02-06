@@ -3,7 +3,7 @@ import React from "react";
 const SideCard = () => {
   return (
     <>
-      <div className="bg-purple-200 rounded-lg p-8 flex flex-col justify-between">
+      <div className="bg-lilac_dark rounded-lg p-8 flex flex-col justify-between w-96">
         <div>
           <h2 className="text-4xl font-bold text-white mb-4">
             Book of the Month

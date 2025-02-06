@@ -78,3 +78,16 @@ export async function addReview(id, review) {
     throw error;
   }
 }
+
+export async function getFeaturedBooks() {
+  const featuredBookIds = [1, 2, 3, 4, 6, 8, 9, 11];
+
+  try {
+    const bookPromises = featuredBookIds.map((id) => getBookById(id));
+    const books = await Promise.all(bookPromises);
+    return books;
+  } catch (error) {
+    console.error("Error fetching featured books:", error);
+    throw error;
+  }
+}
