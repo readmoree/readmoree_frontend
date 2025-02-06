@@ -50,7 +50,6 @@ const OrderDetails = () => {
           </ul>
         </div>
       </div>
-      <Footer />
     </>
   );
 };

@@ -21,6 +21,7 @@ import { registerLicense } from "@syncfusion/ej2-base";
 import Search from "./Screens/Search";
 import Unauthorized from "./Pages/Unauthorized";
 import NotFound from "./Pages/NotFound";
+import OrderDetails from "./Pages/OrderDetails";
 
 let key =
   "Ngo9BigBOggjHTQxAR8/V1NMaF1cXmhLYVJ3WmFZfVtgdV9HZFZSQWYuP1ZhSXxWdkdjXX9fcXBWQ2JbWUM=";
@@ -77,6 +78,16 @@ function App() {
           element={
             <ProtectedRoute
               element={<OrderConfirmation />}
+              allowedRoles={["CUSTOMER"]}
+            />
+          }
+        />
+
+        <Route
+          path="/order/:orderId"
+          element={
+            <ProtectedRoute
+              element={<OrderDetails />}
               allowedRoles={["CUSTOMER"]}
             />
           }

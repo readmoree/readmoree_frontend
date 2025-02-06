@@ -7,6 +7,7 @@ const preprocessOrders = (orders) => {
   return orders.reduce((acc, order) => {
     if (!acc[order.orderId]) {
       acc[order.orderId] = {
+        addressId: order.addressId,
         paymentMethod: order.paymentMethod,
         paymentStatus: order.paymentStatus,
         orderStatus: order.orderStatus,
@@ -21,6 +22,7 @@ const preprocessOrders = (orders) => {
     acc[order.orderId].books.push({
       bookId: order.bookId,
       bookName: order.bookName,
+      image: order.image,
       quantity: order.quantity,
       price: order.price,
     });
@@ -41,14 +43,17 @@ const OrderList = () => {
         const data = Object.entries(preprocessOrders(response)).map(
           ([orderId, orderData]) => ({
             id: orderId,
+            addressId: orderData.addressId,
             orderDate: orderData.orderDate,
             total: orderData.orderTotal,
             status: orderData.orderStatus,
+            paymentId: orderData.paymentId,
             paymentMethod: orderData.paymentMethod,
             paymentStatus: orderData.paymentStatus,
             trackingId: orderData.trackingId,
             items: orderData.books.map((book) => ({
               name: book.bookName,
+              image: book.image,
               quantity: book.quantity,
               price: book.price,
             })),

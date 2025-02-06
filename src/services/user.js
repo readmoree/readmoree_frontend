@@ -146,6 +146,24 @@ export async function setDefaultAddress(addressId) {
   }
 }
 
+export async function getAddressById(addressId) {
+  try {
+    const response = await axios.get(
+      `${USER_SERVICE_URL}/address/${addressId}`,
+      {
+        headers: {
+          authorization: `BEARER ${sessionStorage["token"]}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 export async function getReviews() {
   try {
     const response = await axios.get(`${BOOK_SERVICE_URL}/reviews/customer`, {
