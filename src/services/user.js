@@ -1,6 +1,8 @@
 import axios from "axios";
 
 const USER_SERVICE_URL = `${process.env.REACT_APP_USER_SERVICE_URL}/user`;
+const BOOK_SERVICE_URL = `${process.env.REACT_APP_BOOK_SERVICE_URL}`;
+const ORDER_SERVICE_URL = `${process.env.REACT_APP_ORDER_SERVICE_URL}`;
 
 export async function loadUserData() {
   try {
@@ -136,6 +138,54 @@ export async function setDefaultAddress(addressId) {
         },
       }
     );
+
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function getReviews() {
+  try {
+    const response = await axios.get(`${BOOK_SERVICE_URL}/reviews/customer`, {
+      headers: {
+        Authorization: `Bearer ${sessionStorage["token"]}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function deleteReview(bookId, reviewId) {
+  try {
+    const response = await axios.delete(
+      `${BOOK_SERVICE_URL}/reviews/customer/book/${bookId}/review/${reviewId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${sessionStorage["token"]}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function getOrders() {
+  try {
+    const response = await axios.get(`${ORDER_SERVICE_URL}/orders/list`, {
+      headers: {
+        Authorization: `Bearer ${sessionStorage["token"]}`,
+      },
+    });
 
     return response.data;
   } catch (error) {

@@ -45,7 +45,7 @@ const PersonalDetails = ({ userData }) => {
   };
 
   return (
-    <div className="p-6 md:p-8 bg-gray-50">
+    <div className="p-6 md:p-8">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-3xl font-bold">Personal Details</h2>
         {!isEditing && (

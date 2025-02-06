@@ -104,7 +104,7 @@ const SavedAddresses = ({ userData }) => {
   };
 
   return (
-    <div className="p-6 md:p-8 bg-gray-50">
+    <div className="p-6 md:p-8">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-3xl font-bold">Saved Addresses</h2>
         <button
@@ -193,10 +193,7 @@ const SavedAddresses = ({ userData }) => {
         </div>
       ) : (
         addresses.map((address) => (
-          <div
-            key={address.id}
-            className="border rounded-md p-6 bg-white shadow-sm mb-4"
-          >
+          <div key={address.id} className="border rounded-md p-6 bg-white mb-4">
             <div className="flex justify-between items-center w-full mb-2">
               <h3 className="font-semibold text-lg">
                 {address.addressLabel}{" "}

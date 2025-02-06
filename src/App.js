@@ -13,13 +13,11 @@ import "react-toastify/dist/ReactToastify.css";
 import { Route, Routes } from "react-router-dom";
 import Wishlist from "./Pages/Wishlist";
 import OrderConfirmation from "./Pages/OrderConfirmation";
-import BookCard from "./Components/BookCard";
 import AdminDashboard from "./Pages/Admin/AdminDashboard";
 import OrderDashboard from "./Pages/Admin/OrdersPage";
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
 import ProductsPage from "./Pages/Admin/ProductPage";
 import { registerLicense } from "@syncfusion/ej2-base";
-
 import Search from "./Screens/Search";
 import Unauthorized from "./Pages/Unauthorized";
 import NotFound from "./Pages/NotFound";
@@ -27,6 +25,7 @@ import NotFound from "./Pages/NotFound";
 let key =
   "Ngo9BigBOggjHTQxAR8/V1NMaF1cXmhLYVJ3WmFZfVtgdV9HZFZSQWYuP1ZhSXxWdkdjXX9fcXBWQ2JbWUM=";
 registerLicense(key);
+
 function App() {
   return (
     <>
