@@ -48,10 +48,9 @@ const CategorySearch = () => {
       const params = {};
 
       if (label)
-        params.label = label
+        params.labels = label
           .trim()
-          .replace(/-/g, " ")
-          .replace(/&/g, "")
+          .replace(/[^a-zA-Z0-9]/g, "")
           .toUpperCase();
       if (category) params.category = category.trim().replace(/\s+/g, "-");
       if (subcategory)
@@ -124,6 +123,10 @@ const CategorySearch = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [label, category, subcategory]);
 
   useEffect(() => {
     let newData = [...data];

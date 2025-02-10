@@ -9,6 +9,8 @@ const OrderTable = ({ orders, customers, addresses, handleActionClick }) => {
     setExpanded(expanded === index ? null : index);
   };
 
+  console.log(orders, customers, addresses);
+
   return (
     <div className="px-5 py-2">
       <div className="">
@@ -31,12 +33,18 @@ const OrderTable = ({ orders, customers, addresses, handleActionClick }) => {
                   <td className="py-3 px-4">{order.orderId}</td>
                   <td className="py-3 px-4 flex flex-col gap-1">
                     <div className="font-bold">
-                      {customers[index]?.firstName || "No"}{" "}
-                      {customers[index]?.lastName || "Name"}
+                      {customers.filter(
+                        (cust) => cust.customerId === order.customerId
+                      )[0]?.firstName || "No"}{" "}
+                      {customers.filter(
+                        (cust) => cust.customerId === order.customerId
+                      )[0]?.lastName || "Name"}
                       {/* XYZ XYZ */}
                     </div>
                     <div className="text-sm">
-                      {customers[index]?.email || "example@gmail.com"}
+                      {customers.filter(
+                        (cust) => cust.customerId === order.customerId
+                      )[0]?.email || "example@gmail.com"}
                     </div>
                   </td>
                   <td className="py-3 px-4">

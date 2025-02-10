@@ -58,7 +58,7 @@ const AnimatedCard = ({ title, value, percentage, comparison, delay }) => {
               <ShoppingBag className="text-black bg-lilac_dark" />
             </div>
             <div>
-              <span className="text-3xl font-bold">₹{count}</span>
+              <span className="text-3xl font-bold">{count}</span>
             </div>
           </div>
           <span className="text-sm text-green-600 font-medium">
@@ -225,11 +225,17 @@ const StatisticsPage = ({
                     <td className="py-3 px-4">{order.orderId}</td>
                     <td className="py-3 px-4 flex flex-col gap-1">
                       <div className="font-bold">
-                        {customers[index]?.firstName || "No"}{" "}
-                        {customers[index]?.lastName || "Name"}
+                        {customers.filter(
+                          (cust) => cust.customerId === order.customerId
+                        )[0]?.firstName || "No"}{" "}
+                        {customers.filter(
+                          (cust) => cust.customerId === order.customerId
+                        )[0]?.lastName || "Name"}
                       </div>
                       <div className="text-sm">
-                        {customers[index]?.email || "example@gmail.com"}
+                        {customers.filter(
+                          (cust) => cust.customerId === order.customerId
+                        )[0]?.email || "example@gmail.com"}
                       </div>
                     </td>
                     <td className="py-3 px-4">

@@ -7,24 +7,29 @@ import AdminHeader from "../../Components/Admin/AdminHeader";
 import { FiSearch } from "react-icons/fi";
 import BookList from "../../Components/Admin/BookList";
 import axios from "axios";
-const categories = [
-  "Academics",
-  "Fiction",
-  "Non Fiction",
-  "Children",
-  "Young Adults",
-  "Comics & Graphics Novels",
-];
+import {
+  addBook,
+  getAllLabels,
+  getCatFromLabel,
+  getSubCatFromLabelCat,
+} from "../../services/book";
 
 export default function ProductsPage() {
   // const [books, setBooks] = useState(initialBooks);
   const [booksData, setBooksData] = useState([]);
   const [filteredBooks, setFilteredBooks] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("Fiction");
+  const [lables, setLables] = useState([]);
+  const [listingLable, setListingLable] = useState("FICTION");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isInventoryModalOpen, setIsInventoryModalOpen] = useState(false);
   const [selectedBook, setSelectedBook] = useState(null);
   const [newStock, setNewStock] = useState("");
+
+  const [categories, setCategories] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
+  const [selectedLable, setSelectedLable] = useState("");
+  const [selectedCat, setSelectedCat] = useState("");
+  const [selectedSubCat, setSelectedSubCat] = useState("");
 
   const [newBook, setNewBook] = useState({
     title: "",
@@ -38,7 +43,9 @@ export default function ProductsPage() {
     language: "",
     binding: "",
     description: "",
+    lable: "",
     category: "",
+    subCategory: "",
     stock: "",
   });
 
@@ -55,14 +62,61 @@ export default function ProductsPage() {
     }
   };
 
+  const getLabels = async () => {
+    try {
+      const response = await getAllLabels();
+      setLables(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getCategories = async (label) => {
+    try {
+      const response = await getCatFromLabel(label);
+      setCategories(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getSubCats = async (label, cat) => {
+    try {
+      const response = await getSubCatFromLabelCat(label, cat);
+      setSubCategories(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     getAllBooks();
+    getLabels();
   }, []);
 
+  useEffect(() => {
+    getCategories(selectedLable);
+  }, [selectedLable]);
+
+  useEffect(() => {
+    getSubCats(selectedLable, selectedCat);
+  }, [selectedCat]);
+
+  useEffect(() => {
+    console.log(newBook);
+    if (!newBook.lable || newBook !== "") {
+      setSelectedLable(newBook.lable);
+    }
+    if (!newBook.category || newBook.category !== "") {
+      setSelectedCat(newBook.category);
+    }
+    if (!newBook.subCategory || newBook.subCategory !== "") {
+      setSelectedSubCat(newBook.subCategory);
+    }
+  }, [newBook]);
+
   const filterBooks = () => {
-    const formattedCategory = selectedCategory
-      .replace(/\s+/g, "")
-      .toUpperCase(); // Remove spaces and convert to uppercase
+    const formattedCategory = listingLable.replace(/\s+/g, "").toUpperCase(); // Remove spaces and convert to uppercase
     setFilteredBooks(
       booksData.filter(
         (book) =>
@@ -70,39 +124,48 @@ export default function ProductsPage() {
       )
     );
   };
+
   useEffect(() => {
     filterBooks();
-  }, [booksData, selectedCategory]);
+  }, [booksData, listingLable]);
 
   const handleCategoryChange = (category) => {
-    setSelectedCategory(category);
+    setListingLable(category);
   };
   const handleChange = (e) => {
-    // setNewBook({ ...newBook, [e.target.name]: e.target.value });
+    setNewBook({ ...newBook, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
-    //   e.preventDefault();
-    //   setBooks([
-    //     ...books,
-    //     { ...newBook, id: books.length + 1, stock: Number(newBook.stock) || 0 },
-    //   ]);
-    //   setIsModalOpen(false);
-    //   setNewBook({
-    //     title: "",
-    //     author: "",
-    //     publisher: "",
-    //     image: "",
-    //     price: "",
-    //     publicationDate: "",
-    //     pageCount: "",
-    //     isbn: "",
-    //     language: "",
-    //     binding: "",
-    //     description: "",
-    //     category: "",
-    //     stock: "",
-    //   });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await addBook(newBook);
+      if (response.status === 200) {
+        console.log("added");
+      }
+      // setBooks([...books, { ...newBook, stock: Number(newBook.stock) || 0 }]);
+      setIsModalOpen(false);
+      setNewBook({
+        title: "",
+        author: "",
+        publisher: "",
+        image: "",
+        price: "",
+        publicationDate: "",
+        pageCount: "",
+        isbn: "",
+        language: "",
+        binding: "",
+        description: "",
+        lable: "",
+        category: "",
+        subCategory: "",
+        stock: "",
+      });
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const openInventoryModal = (book) => {
@@ -126,9 +189,9 @@ export default function ProductsPage() {
   };
 
   // const filteredBooks =
-  //   selectedCategory === "All"
+  //   listingLable === "All"
   //     ? books
-  //     : books.filter((book) => book.category === selectedCategory);
+  //     : books.filter((book) => book.category === listingLable);
 
   return (
     <div className="flex max-h-screen">
@@ -148,11 +211,11 @@ export default function ProductsPage() {
               {/* Category Filter Dropdown */}
               <DropdownMenu.Root className="">
                 <DropdownMenu.Trigger className="flex items-center gap-2 px-14 py-2 bg-white border border-lilac_dark rounded-lg cursor-pointer font-bold">
-                  {selectedCategory} Books
+                  {listingLable} Books
                   <ChevronDown className="w-4 h-4" />
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content className="bg-white shadow-md rounded-lg p-2 px-2">
-                  {categories.map((category) => (
+                  {lables.map((category) => (
                     <DropdownMenu.Item
                       key={category}
                       onClick={() => handleCategoryChange(category)}
@@ -299,14 +362,14 @@ export default function ProductsPage() {
                         />
 
                         <select
-                          name="category"
-                          value={newBook.category}
+                          name="lable"
+                          value={newBook.lable}
                           onChange={handleChange}
                           className="w-full px-3  py-1.5 border border-gray-300 rounded-lg focus:ring-1 focus:ring-lilac_dark"
                           required
                         >
                           <option value="">Select Label</option>
-                          {categories.slice(1).map((category) => (
+                          {lables.map((category) => (
                             <option key={category} value={category}>
                               {category}
                             </option>
@@ -321,7 +384,7 @@ export default function ProductsPage() {
                           required
                         >
                           <option value="">Select Category</option>
-                          {categories.slice(1).map((category) => (
+                          {categories.map((category) => (
                             <option key={category} value={category}>
                               {category}
                             </option>
@@ -329,14 +392,14 @@ export default function ProductsPage() {
                         </select>
 
                         <select
-                          name="category"
-                          value={newBook.category}
+                          name="subCategory"
+                          value={newBook.subCategory}
                           onChange={handleChange}
                           className="w-full px-3  py-1.5 border border-gray-300 rounded-lg focus:ring-1 focus:ring-lilac_dark"
                           required
                         >
                           <option value="">Select Subcategory</option>
-                          {categories.slice(1).map((category) => (
+                          {subCategories.map((category) => (
                             <option key={category} value={category}>
                               {category}
                             </option>

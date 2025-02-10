@@ -17,7 +17,7 @@ const BookCard = ({ book, openInventoryModal }) => {
       <div className="flex flex-row gap-3">
         <div>
           <img
-            src={book.image}
+            src={book.image.split(" ")[0]}
             alt={book.title}
             className="w-fit h-32 object-cover rounded-md mb-2"
           />

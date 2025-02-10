@@ -2,6 +2,55 @@ import axios from "axios";
 
 const BOOK_SERVICE_URL = process.env.REACT_APP_BOOK_SERVICE_URL;
 
+export async function getAllLabels() {
+  try {
+    const response = await axios.get(`${BOOK_SERVICE_URL}/book/admin/labels`, {
+      headers: {
+        Authorization: `Bearer ${sessionStorage["token"]}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function getCatFromLabel(label) {
+  try {
+    const response = await axios.get(
+      `${BOOK_SERVICE_URL}/book/admin/categories/${label.toUpperCase()}`,
+      {
+        headers: {
+          Authorization: `Bearer ${sessionStorage["token"]}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function getSubCatFromLabelCat(label, cat) {
+  try {
+    const response = await axios.get(
+      `${BOOK_SERVICE_URL}/book/admin/subCategories/${label.toUpperCase()}/${cat}`,
+      {
+        headers: {
+          Authorization: `Bearer ${sessionStorage["token"]}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 export async function getAllBooks() {
   try {
     const response = await axios.get(`${BOOK_SERVICE_URL}/book/public/all`);
@@ -22,6 +71,49 @@ export async function getBookByCat(params) {
       `${BOOK_SERVICE_URL}/book/public/filter?${queryString}`
     );
     return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function addBook(formData) {
+  try {
+    const { title, isbn, description, image, category, subCategory } = formData;
+
+    const payload = {
+      title,
+      isbn,
+      description,
+      image,
+    };
+
+    const labels = formData.lable.toUpperCase();
+    payload.pageCount = parseInt(formData.pageCount);
+    payload.price = parseFloat(formData.price); // Convert price to float
+    payload.discount = parseFloat(formData.discount) || 0; // Convert discount to float, default to 0 if invalid
+    payload.authorId = parseInt(formData.author);
+    payload.publisherId = parseInt(formData.publisher);
+    payload.publicationDate = formData.publicationDate;
+    payload.language = formData.language.toUpperCase();
+    payload.binding = formData.binding.toUpperCase();
+    payload.totalAvailableCount = parseInt(formData.stock);
+    payload.bookMappings = [{ labels, category, subCategory }];
+    payload.available = true;
+
+    console.log(payload);
+
+    const response = await axios.post(
+      `${BOOK_SERVICE_URL}/book/admin/add`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${sessionStorage["token"]}`,
+        },
+      }
+    );
+
+    return response;
   } catch (error) {
     console.error(error);
     throw error;
