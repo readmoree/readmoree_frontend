@@ -7,7 +7,7 @@ const bookImages = [
 
 const YoundAdults = () => {
   return (
-    <div className="px-10 py-5 shadow-sm border border-black">
+    <div className="px-10 py-5 shadow-sm">
       {/* Categories (First 3 columns) */}
       <div className="flex flex-row gap-8">
         <div className="flex flex-col gap-1.5">

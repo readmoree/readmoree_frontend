@@ -9,7 +9,7 @@ const bookImages = [
 
 const Languages = () => {
   return (
-    <div className="flex flex-row justify-between px-10 py-5 shadow-sm border border-black gap-20">
+    <div className="flex flex-row justify-between px-10 py-5 shadow-sm  gap-20">
       {/* Languages List */}
       <div className="flex flex-col gap-2 text-md">
         <Link to="/search/languages/hindi" className="hover:text-gray-600">

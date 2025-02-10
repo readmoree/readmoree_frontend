@@ -118,7 +118,7 @@ const BookItem = ({
     <div className="flex items-center justify-between border p-4 px-6 rounded-lg shadow-sm">
       <div className="flex items-center">
         <img
-          src="https://www.crossword.in/cdn/shop/files/71OUTeaNQBL._SL1500_1080x@2x.jpg?v=1724907752"
+          src={details.image.split(" ")[0]}
           alt={details.title}
           className="w-20 h-28 object-cover rounded-md"
         />

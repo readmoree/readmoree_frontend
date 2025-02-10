@@ -14,13 +14,13 @@ const Tabs = ({ book }) => {
   };
 
   return (
-    <div className="mt-8">
+    <div className="mt-16">
       <div className="flex border-b">
         <button
           className={`py-2 ${
             activeTab === "description"
-              ? "text-blue-600 border-b-2 border-blue-600 font-semibold"
-              : "text-gray-600 hover:text-blue-600"
+              ? "text-lilac_dark border-b-2 border-lilac_dark font-semibold"
+              : "text-gray-600 hover:lilac_dark"
           }`}
           onClick={() => setActiveTab("description")}
         >
@@ -29,8 +29,8 @@ const Tabs = ({ book }) => {
         <button
           className={`py-2 mx-6 ${
             activeTab === "author"
-              ? "text-blue-600 border-b-2 border-blue-600 font-semibold"
-              : "text-gray-600 hover:text-blue-600"
+              ? "text-lilac_dark border-b-2 border-lilac_dark font-semibold"
+              : "text-gray-600 hover:lilac_dark"
           }`}
           onClick={() => setActiveTab("author")}
         >

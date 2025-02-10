@@ -9,10 +9,10 @@ import {
 
 const PaymentMode = ({ paymentMode, handlePaymentModeChange }) => {
   const paymentOptions = [
-    { mode: "Credit/Debit Cards", icon: <FaRegCreditCard /> },
-    { mode: "Net Banking", icon: <FaUniversity /> },
+    { mode: "CREDIT CARD", icon: <FaRegCreditCard /> },
+    { mode: "NET BANKING", icon: <FaUniversity /> },
     { mode: "UPI", icon: <FaMobileAlt /> },
-    { mode: "Cash on Delivery", icon: <FaMoneyBillWave /> },
+    { mode: "COD", icon: <FaMoneyBillWave /> },
   ];
 
   return (
@@ -23,9 +23,7 @@ const PaymentMode = ({ paymentMode, handlePaymentModeChange }) => {
           <label
             key={mode}
             className={`flex items-center border p-2 cursor-pointer ${
-              paymentMode === mode
-                ? "bg-purple-100 border-purple-600"
-                : "border-gray-300"
+              paymentMode === mode ? " border-lilac_dark" : "border-gray-300"
             }`}
           >
             <input
@@ -36,7 +34,7 @@ const PaymentMode = ({ paymentMode, handlePaymentModeChange }) => {
               onChange={handlePaymentModeChange}
               className="mr-2"
             />
-            <span className="text-xl mr-3 text-purple-600">{icon}</span>
+            <span className="text-xl mr-3 text-lilac_dark">{icon}</span>
             {mode}
           </label>
         ))}

@@ -13,7 +13,7 @@ const PincodeChecker = () => {
           placeholder="Enter Pincode"
           className="border border-gray-300 rounded px-4 py-2 w-full"
         />
-        <button className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">
+        <button className="bg-lilac_dark text-white py-2 px-4 rounded hover:bg-blue-700">
           Check
         </button>
       </div>

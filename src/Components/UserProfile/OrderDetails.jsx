@@ -32,7 +32,7 @@ const OrderDetails = ({ orderItem }) => {
               Order ID:{" "}
               <span className="font-normal font-mono">{orderItem.id}</span>
             </h2>
-            <OrderProgress />
+            {/* <OrderProgress /> */}
 
             {/* Order Details Section */}
             <div className="mt-6">

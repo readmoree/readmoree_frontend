@@ -11,13 +11,13 @@ const Filters = ({
   clearFilters,
 }) => {
   return (
-    <div className="flex gap-5 flex-col">
-      <div className="mt-5 flex justify-between items-center">
+    <div className="flex gap-5 flex-col mr-4">
+      <div className=" flex justify-between items-center">
         <h2 className="text-xl mb-2 ml-1">Filters</h2>
         <div className="pr-10">
           <button
             onClick={clearFilters}
-            className="text-sm text-blue-500 hover:text-blue-700 px-4 py-2 border border-gray-300 rounded hover:bg-gray-50"
+            className="text-sm text-lilac_dark hover:text-lilac_dark px-4 py-2 border border-gray-300 rounded hover:bg-gray-50"
           >
             Clear Filters
           </button>
@@ -54,10 +54,10 @@ const Filters = ({
             max={2000}
             defaultValue={2000}
             onChange={(value) => handleSliderChange("priceRange", value)}
-            trackStyle={{ backgroundColor: "#4C51BF", height: 5 }}
+            trackStyle={{ backgroundColor: "#A294F9", height: 5 }}
             handleStyle={{
-              borderColor: "#4C51BF",
-              backgroundColor: "#4C51BF",
+              borderColor: "#A294F9",
+              backgroundColor: "#A294F9",
               height: 20,
               width: 20,
             }}
@@ -76,10 +76,10 @@ const Filters = ({
             max={100}
             defaultValue={0}
             onChange={(value) => handleSliderChange("discountRange", value)}
-            trackStyle={{ backgroundColor: "#4C51BF", height: 5 }}
+            trackStyle={{ backgroundColor: "#A294F9", height: 5 }}
             handleStyle={{
-              borderColor: "#4C51BF",
-              backgroundColor: "#4C51BF",
+              borderColor: "#A294F9",
+              backgroundColor: "#A294F9",
               height: 20,
               width: 20,
             }}

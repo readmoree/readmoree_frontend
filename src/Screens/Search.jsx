@@ -6,6 +6,9 @@ import { searchBook } from "../services/book";
 import "rc-slider/assets/index.css";
 import Filters from "../Components/Search/Filters";
 import SearchContent from "../Components/Search/SearchContent";
+// import HeaderSection from "../Components/Search/HeaderSection";
+import Pagination from "../Components/Search/Pagination";
+import HeaderSectionSearch from "../Components/HeaderSectionSearch";
 
 const Search = () => {
   const booksPerPage = 20; // Number of books per page
@@ -176,6 +179,12 @@ const Search = () => {
       {loading && <p>Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
 
+      <HeaderSectionSearch
+        label={`Search results for ${params.get("query") || ""}`}
+        sortParameters={sortParameters}
+        changeSortParam={changeSortParam}
+      />
+
       {!loading && !error && data.length > 0 ? (
         <div className="font-mont mx-20 mb-20">
           <div className="content mt-10">
@@ -189,9 +198,6 @@ const Search = () => {
               />
 
               <SearchContent
-                label={`Search results for ${params.get("searchQuery") || ""}`}
-                sortParameters={sortParameters}
-                changeSortParam={changeSortParam}
                 currentBooks={currentBooks}
                 handlePageClick={handlePageClick}
                 pageCount={pageCount}
@@ -202,7 +208,7 @@ const Search = () => {
       ) : (
         !loading && <p>No results found.</p>
       )}
-
+      <Pagination handlePageClick={handlePageClick} pageCount={pageCount} />
       <Footer />
     </>
   );

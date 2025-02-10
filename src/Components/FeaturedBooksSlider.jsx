@@ -5,34 +5,12 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import BookCard from "./BookCard"; // Reusing existing BookCard component
 
-const FeaturedBooksSlider = () => {
-  const [featuredBooks, setFeaturedBooks] = useState([]);
-
-  useEffect(() => {
-    async function fetchFeaturedBooks() {
-      try {
-        const books = await getFeaturedBooks();
-        setFeaturedBooks(books);
-      } catch (error) {
-        console.error("Failed to load featured books", error);
-      }
-    }
-
-    fetchFeaturedBooks();
-  }, []);
-
-  //   const settings = {
-  //     dots: false,
-  //     infinite: true,
-  //     speed: 500,
-  //     slidesToShow: 5,
-  //     slidesToScroll: 1,
-  //     responsive: [
-  //       { breakpoint: 1024, settings: { slidesToShow: 3 } },
-  //       { breakpoint: 768, settings: { slidesToShow: 2 } },
-  //       { breakpoint: 480, settings: { slidesToShow: 1 } },
-  //     ],
-  //   };
+const FeaturedBooksSlider = ({ featuredBooks = [] }) => {
+  if (!featuredBooks || featuredBooks.length === 0) {
+    return (
+      <p className="text-center text-gray-500">No featured books available.</p>
+    );
+  }
 
   // Custom Prev Button
   const PrevArrow = ({ onClick }) => (
@@ -92,6 +70,7 @@ const FeaturedBooksSlider = () => {
     nextArrow: <NextArrow />,
   };
 
+  console.log("featuredBooks", featuredBooks);
   return (
     <div className="relative px-8 md:px-10">
       <Slider {...settings}>

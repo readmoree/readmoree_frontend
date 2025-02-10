@@ -61,6 +61,7 @@ const ImageCarousel = ({ book }) => {
   };
 
   const images = book.image.split(" ");
+  console.log(images);
 
   return (
     <div className="w-full md:w-1/2 relative">

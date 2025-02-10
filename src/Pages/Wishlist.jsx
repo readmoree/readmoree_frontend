@@ -5,9 +5,13 @@ import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
 import axios from "axios";
 import { toast } from "react-toastify";
+import LoadingPage from "./LoadingPage";
 const Wishlist = () => {
   const [wishlistBooks, setWishlistBooks] = useState([]);
-
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    setTimeout(() => setLoading(false), 1000);
+  }, []);
   const getWishlistBooks = async () => {
     try {
       const token = sessionStorage.getItem("token");
@@ -94,7 +98,9 @@ const Wishlist = () => {
     getWishlistBooks();
   }, []);
 
-  return (
+  return loading ? (
+    <LoadingPage />
+  ) : (
     <>
       <Navbar />
       <div className="container mx-auto p-6 text-center">
@@ -106,10 +112,7 @@ const Wishlist = () => {
               className="border m-4 p-6 rounded-lg text-center flex items-center flex-col"
             >
               <img
-                src={
-                  book.imageURL ||
-                  "https://www.crossword.in/cdn/shop/files/71OUTeaNQBL._SL1500_1080x@2x.jpg?v=1724907752"
-                }
+                src={book.image.split(" ")[0]}
                 alt={book.title}
                 className="h-48 w-fit mb-2"
               />

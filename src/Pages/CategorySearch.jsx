@@ -6,6 +6,8 @@ import { getBookByCat } from "../services/book";
 import "rc-slider/assets/index.css";
 import Filters from "../Components/Search/Filters";
 import SearchContent from "../Components/Search/SearchContent";
+import HeaderSection from "../Components/Search/HeaderSection";
+import Pagination from "../Components/Search/Pagination";
 
 const CategorySearch = () => {
   const booksPerPage = 20; // Number of books per page
@@ -56,6 +58,7 @@ const CategorySearch = () => {
       if (subcategory)
         params.subcategory = subcategory.trim().replace(/\s+/g, "-");
 
+      console.log(params);
       const response = await getBookByCat(params);
       setData(response.books);
       setFilteredData(response.books);
@@ -190,8 +193,13 @@ const CategorySearch = () => {
       {loading && <p>Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
 
+      <HeaderSection
+        label={label}
+        sortParameters={sortParameters}
+        changeSortParam={changeSortParam}
+      />
       {!loading && !error && data.length > 0 ? (
-        <div className="font-mont mx-20 mb-20">
+        <div className="font-mont mx-20 mb-20 overflow-x-hidden">
           <div className="content mt-10">
             <div className="flex items-centre">
               <Filters
@@ -202,14 +210,14 @@ const CategorySearch = () => {
                 clearFilters={clearFilters}
               />
 
-              <SearchContent
-                label={label}
-                sortParameters={sortParameters}
-                changeSortParam={changeSortParam}
-                currentBooks={currentBooks}
-                handlePageClick={handlePageClick}
-                pageCount={pageCount}
-              />
+              <div className="flex flex-col">
+                <SearchContent
+                  label={label}
+                  sortParameters={sortParameters}
+                  changeSortParam={changeSortParam}
+                  currentBooks={currentBooks}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -217,6 +225,7 @@ const CategorySearch = () => {
         !loading && <p>No results found.</p>
       )}
 
+      <Pagination handlePageClick={handlePageClick} pageCount={pageCount} />
       <Footer />
     </>
   );

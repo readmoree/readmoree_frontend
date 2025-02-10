@@ -19,13 +19,13 @@ const CouponSelector = ({
         />
         <button
           onClick={handleApplyCoupon}
-          className="bg-purple-600 text-white px-4 py-2 hover:bg-purple-700"
+          className="bg-lilac_dark text-white px-4 py-2 hover:bg-purple-700"
         >
           Apply
         </button>
       </div>
       {isCouponApplied && (
-        <p className="text-green-600 mt-2 text-sm">
+        <p className="text-lilac_dark mt-2 text-sm">
           Coupon "{couponCode}" Applied Successfully!
         </p>
       )}

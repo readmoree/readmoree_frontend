@@ -5,22 +5,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import BookCard from "./BookCard";
 
-const BookOfTheMonthSlider = () => {
-  const [featuredBooks, setFeaturedBooks] = useState([]);
-
-  useEffect(() => {
-    async function fetchFeaturedBooks() {
-      try {
-        const books = await getFeaturedBooks();
-        setFeaturedBooks(books);
-      } catch (error) {
-        console.error("Failed to load featured books", error);
-      }
-    }
-
-    fetchFeaturedBooks();
-  }, []);
-
+const BookOfTheMonthSlider = ({ featuredBooks }) => {
   // Custom Prev Button
   const PrevArrow = ({ onClick }) => (
     <button
@@ -82,7 +67,7 @@ const BookOfTheMonthSlider = () => {
   return (
     <div className="relative w-full px-8 md:px-10">
       <Slider {...settings}>
-        {featuredBooks.slice(0, 3).map((book, index) => (
+        {featuredBooks.map((book, index) => (
           <div key={index} className="flex justify-center">
             <BookCard book={book} />
           </div>

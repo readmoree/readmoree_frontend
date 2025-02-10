@@ -10,12 +10,17 @@ import BookDetails from "../Components/BookDescription/BookDetails";
 import { getBookById } from "../services/book";
 import { loadUserData } from "../services/user";
 import { useParams } from "react-router-dom";
+import LoadingPage from "../Pages/LoadingPage";
 
 const BookDescriptionScreen = () => {
   const [book, setBook] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const { id } = useParams();
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    setTimeout(() => setLoading(false), 1000);
+  }, []);
   useEffect(() => {
     const fetchBook = async () => {
       try {
@@ -39,7 +44,9 @@ const BookDescriptionScreen = () => {
     if (typeof sessionStorage["token"] !== "undefined") fetchCurrentUser();
   }, []);
 
-  return (
+  return loading ? (
+    <LoadingPage />
+  ) : (
     <>
       <Navbar />
       {book === null && (

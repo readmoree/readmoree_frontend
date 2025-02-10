@@ -67,7 +67,7 @@ const ReviewComponent = ({ currentUser, id }) => {
   const handleReviewSubmit = async (e) => {
     e.preventDefault();
     if (newReview.comment && newReview.rating > 0) {
-      const response = await addReview(3, newReview);
+      const response = await addReview(id, newReview);
       if (response.status === 201) {
         const review = response.data.review;
         console.log(review);
@@ -146,7 +146,7 @@ const ReviewComponent = ({ currentUser, id }) => {
           sessionStorage["token"] != null) && (
           <button
             onClick={() => setIsModalOpen(true)}
-            className="bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700"
+            className="bg-lilac_dark text-white py-2 px-6 rounded hover:bg-lilac_dark"
           >
             Add Your Review
           </button>
@@ -159,12 +159,12 @@ const ReviewComponent = ({ currentUser, id }) => {
             onClick={() => setIsModalOpen(false)} // Close modal when clicking outside
           >
             <div
-              className="bg-white p-6 rounded-lg w-96 relative"
+              className="bg-white rounded-lg w-96 relative p-10"
               onClick={(e) => e.stopPropagation()} // Prevent click from closing modal inside
             >
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="absolute top-2 right-2 text-gray-600"
+                className="absolute top-5 right-5 text-gray-600"
               >
                 X
               </button>
@@ -220,7 +220,7 @@ const ReviewComponent = ({ currentUser, id }) => {
                 <button
                   onClick={handleReviewSubmit}
                   type="submit"
-                  className="bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700"
+                  className="bg-lilac_dark text-white py-2 px-6 rounded hover:bg-lilac_dark"
                 >
                   Submit Review
                 </button>

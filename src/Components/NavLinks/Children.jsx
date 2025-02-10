@@ -8,7 +8,7 @@ const bookImages = [
 
 const Children = () => {
   return (
-    <div className="flex flex-row justify-between px-10 py-8 shadow-sm border border-black gap-60">
+    <div className="flex flex-row justify-between px-10 py-8 shadow-sm gap-60">
       {/* Categories (First 3 columns) */}
       <div className="flex flex-row gap-8">
         <div className="flex flex-col gap-1">

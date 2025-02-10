@@ -102,8 +102,6 @@ const Navbar = () => {
         return <ComicsGraphicNovels />;
       case "LANGUAGES":
         return <Languages />;
-      case "OFFERS":
-        return <Fiction />;
     }
   };
 
@@ -158,7 +156,7 @@ const Navbar = () => {
                 {/* Profile Dropdown */}
                 {isDropdownOpen && (
                   <div
-                    className="absolute mt-2 w-64 bg-white shadow-lg rounded-md p-4"
+                    className="absolute mt-2 w-64 bg-white shadow-lg rounded-md p-4 z-50"
                     onMouseEnter={() => setIsDropdownOpen(true)}
                     onMouseLeave={() => setIsDropdownOpen(false)}
                   >
@@ -201,12 +199,6 @@ const Navbar = () => {
                           onClick={() => navigate("/addresses")}
                         >
                           Saved Addresses
-                        </button>
-                        <button
-                          className="block w-full text-left px-4 py-2 hover:bg-gray-100 rounded"
-                          onClick={() => navigate("/reading-profile")}
-                        >
-                          Reading Profile
                         </button>
                       </div>
                     </div>
@@ -282,7 +274,7 @@ const Navbar = () => {
         {/* component of categories*/}
         <div className="flex items-center justify-center">
           <div
-            className="absolute top-40 bg-white shadow-lg border border-black z-50"
+            className="absolute top-40 bg-white shadow-lg z-50"
             onMouseLeave={() => setHoveredCategory(null)}
           >
             {renderHoveredComponent()}

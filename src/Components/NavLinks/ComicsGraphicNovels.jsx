@@ -9,7 +9,7 @@ const bookImages = [
 
 const ComicsGraphicNovels = () => {
   return (
-    <div className="flex flex-row justify-between px-10 py-5 shadow-sm border border-black gap-40">
+    <div className="flex flex-row justify-between px-10 py-5 shadow-sm gap-40">
       {/* Categories (First 3 columns) */}
       <div className="flex flex-row gap-10">
         <div className="flex flex-col gap-2">

@@ -10,6 +10,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { loadStripe } from "@stripe/stripe-js";
+import LoadingPage from "../Pages/LoadingPage";
 
 const CartScreen = () => {
   const navigate = useNavigate();
@@ -19,7 +20,17 @@ const CartScreen = () => {
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [totalAmount, setTotalAmount] = useState(0);
   const [totalSavings, setTotalSavings] = useState(0);
+  const [loading, setLoading] = useState(true);
 
+  const [paymentMode, setPaymentMode] = useState("");
+
+  const handlePaymentModeChange = (event) => {
+    setPaymentMode(event.target.value);
+  };
+
+  useEffect(() => {
+    setTimeout(() => setLoading(false), 1000);
+  }, []);
   useEffect(() => {
     getCartBooks();
     fetchAddresses();
@@ -30,64 +41,64 @@ const CartScreen = () => {
     calculateAmountPayable();
   }, [books, bookQuantities]); // Recalculate when books or quantities change
 
-  //place order function to make api call
-  // const placeOrder = async () => {
-  //   try {
-  //     const token = sessionStorage.getItem("token");
-  //     if (!token) {
-  //       console.error("Token not found. Please log in.");
-  //       alert("Please log in to place an order.");
-  //       return;
-  //     }
+  // place order function to make api call
+  const makePayment = async () => {
+    try {
+      const token = sessionStorage.getItem("token");
+      if (!token) {
+        console.error("Token not found. Please log in.");
+        alert("Please log in to place an order.");
+        return;
+      }
 
-  //     const stripe = await loadStripe(
-  //       "pk_test_51QoHczGgebrKK2S2hcYBqgFeW8txTJrbc1T9ycn6XyDKt7L1JItyNYL6Ww239TofQPJNBnGuJ5DLhVuwvVM5k03400Bw9gPlMM"
-  //     );
+      const stripe = await loadStripe(
+        "pk_test_51QoHczGgebrKK2S2hcYBqgFeW8txTJrbc1T9ycn6XyDKt7L1JItyNYL6Ww239TofQPJNBnGuJ5DLhVuwvVM5k03400Bw9gPlMM"
+      );
 
-  //     if (!stripe) {
-  //       console.error("Stripe failed to load.");
-  //       alert("Payment service unavailable. Please try again later.");
-  //       return;
-  //     }
+      if (!stripe) {
+        console.error("Stripe failed to load.");
+        alert("Payment service unavailable. Please try again later.");
+        return;
+      }
 
-  //     // Prepare order data
-  //     const body = books.map((book, index) => ({
-  //       title: book.title,
-  //       quantity: bookQuantities[index],
-  //       price: book.price,
-  //     }));
+      // Prepare order data
+      const body = books.map((book, index) => ({
+        title: book.title,
+        quantity: bookQuantities[index],
+        price: book.price,
+      }));
 
-  //     const response = await axios.post(
-  //       "http://localhost:4000/api/create-checkout-session",
-  //       { products: body },
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
+      const response = await axios.post(
+        "http://localhost:4000/api/create-checkout-session",
+        { products: body },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-  //     const session = response.data;
+      const session = response.data;
 
-  //     if (!session.id) {
-  //       console.error("Invalid session response:", session);
-  //       alert("Failed to create checkout session. Please try again.");
-  //       return;
-  //     }
+      if (!session.id) {
+        console.error("Invalid session response:", session);
+        alert("Failed to create checkout session. Please try again.");
+        return;
+      }
 
-  //     // Redirect to Stripe Checkout
-  //     const result = await stripe.redirectToCheckout({ sessionId: session.id });
+      // Redirect to Stripe Checkout
+      const result = await stripe.redirectToCheckout({ sessionId: session.id });
 
-  //     if (result.error) {
-  //       console.error("Stripe Checkout Error:", result.error);
-  //       alert(result.error.message);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error placing order:", error);
-  //     toast.error("Something went wrong. Please try again.");
-  //   }
-  // };
+      if (result.error) {
+        console.error("Stripe Checkout Error:", result.error);
+        alert(result.error.message);
+      }
+    } catch (error) {
+      console.error("Error placing order:", error);
+      toast.error("Something went wrong. Please try again.");
+    }
+  };
   const placeOrder = async () => {
     try {
       const token = sessionStorage.getItem("token");
@@ -118,7 +129,7 @@ const CartScreen = () => {
           },
           params: {
             addressId: selectedAddress.addressId,
-            paymentMethod: "UPI",
+            paymentMethod: paymentMode,
           },
         }
       );
@@ -143,8 +154,9 @@ const CartScreen = () => {
           }
         );
         if (invoiceRes.status == 200) {
-          toast.success(orderResponse.data.message);
-          navigate("/order-confirmation");
+          // toast.success(orderResponse.data.message);
+          await makePayment();
+          // navigate("/order-confirmation");
         }
       }
     } catch (error) {
@@ -302,7 +314,9 @@ const CartScreen = () => {
     }, 0);
   };
 
-  return (
+  return loading ? (
+    <LoadingPage />
+  ) : (
     <>
       <Navbar />
       <div className="max-w-6xl my-10 mx-auto p-6">
@@ -342,10 +356,13 @@ const CartScreen = () => {
               />
 
               {/* Payment Modes */}
-              <PaymentMode />
+              <PaymentMode
+                paymentMode={paymentMode}
+                handlePaymentModeChange={handlePaymentModeChange}
+              />
 
               <button
-                className="w-full bg-purple-600 text-white py-2 mt-6 hover:bg-purple-700"
+                className="w-full bg-lilac_dark text-white py-2 mt-6 hover:bg-purple-700"
                 onClick={placeOrder}
               >
                 Place Order
