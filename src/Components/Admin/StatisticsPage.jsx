@@ -19,6 +19,7 @@ import BestSellersCard from "./BestSellersCard";
 import GraphSection from "./GraphSection";
 import OrderTable from "./OrderTable";
 import axios from "axios";
+import { getAllBooks } from "../../services/book";
 
 const AnimatedCard = ({ title, value, percentage, comparison, delay }) => {
   const [count, setCount] = useState(0);
@@ -84,27 +85,6 @@ const StatisticsPage = ({
 }) => {
   const [orders, setOrders] = useState([]);
   const [customers, setCustomers] = useState([]);
-  // Example Usage
-  const bestSellersData = [
-    {
-      name: "Lorem Ipsum",
-      originalPrice: "126.500",
-      discountedPrice: "126.50",
-      sales: 999,
-    },
-    {
-      name: "Lorem Ipsum",
-      originalPrice: "126.500",
-      discountedPrice: "126.50",
-      sales: 999,
-    },
-    {
-      name: "Lorem Ipsum",
-      originalPrice: "126.500",
-      discountedPrice: "126.50",
-      sales: 999,
-    },
-  ];
 
   const getAllOrders = async () => {
     try {

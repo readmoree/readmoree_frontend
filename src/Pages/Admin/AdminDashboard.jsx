@@ -42,6 +42,7 @@ const AnimatedCard = ({ title, value, delay }) => {
 };
 
 const AdminDashboard = () => {
+  const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const totalSales = 12500; // Example data
   const completedOrders = 230;
