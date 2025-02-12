@@ -34,7 +34,7 @@ const VerifyEmail = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:4000/auth/verify-email",
+        `${process.env.REACT_APP_USER_SERVICE_URL}/auth/verify-email`,
         { otp: enteredOtp },
         { withCredentials: true }
       );
